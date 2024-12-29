@@ -1,0 +1,832 @@
+<!-- sidepanel.html -->
+<!doctype html>
+<html>
+  <head>
+    <base target="_top" />
+    <style>
+      body {
+        font-family: "arial";
+        padding: 10px;
+      }
+      .preview {
+        border: 4px solid #4285f4;
+        border-radius: 10px;
+        display: block;
+        margin: 10px auto;
+        padding: 10px;
+      }
+      .row-buttons {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 10px;
+      }
+      .left-buttons {
+        display: flex;
+      }
+      .left-buttons span {
+        font-size: 18px;
+      }
+      .right-button {
+        margin-left: auto;
+      }
+      .grid-row {
+        display: flex;
+        align-items: baseline;
+        width: 100%;
+      }
+      .row-index {
+        font-size: 18px;
+        width: 20px;
+        margin-right: 5px;
+        text-align: right;
+      }
+      .chord-div {
+        display: flex;
+        border: 4px solid #c6c6c6;
+        border-radius: 8px;
+        margin-bottom: 5px;
+        width: 100%;
+      }
+      .chord-input {
+        display: flex;
+        width: 100%;
+        font-size: 18px !important;
+        /* font-family: "Roboto Mono" !important; */
+        border: none !important;
+      }
+      .focused {
+        border: 4px solid #4285f4;
+      }
+      .rotate {
+        display: flex;
+        vertical-align: sub;
+        cursor: pointer;
+        margin-left: 5px;
+        margin-right: 5px;
+      }
+      .action-panel {
+        margin-top: 20px;
+      }
+      .action-panel button {
+        margin-left: 0px;
+      }
+      .full-width {
+        margin-top: 2pt !important;
+        margin-bottom: 3pt !important;
+        width: 100%;
+      }
+      .hidden {
+        display: none !important;
+      }
+      #busy-overlay {
+        position: absolute;
+        color: #fff;
+        background-color: rgba(0, 0, 0, 0.5);
+        text-align: center;
+        padding-top: 200px;
+        width: 100%;
+        height: 100vh;
+        top: 0;
+        left: 0;
+        z-index: 9998;
+        overflow-y: hidden;
+        overflow-x: hidden;
+      }
+      #busy-overlay span {
+        vertical-align: middle;
+        margin-right: 5px;
+      }
+      @keyframes spin {
+        from {
+          transform: rotate(0deg);
+        }
+        to {
+          transform: rotate(360deg);
+        }
+      }
+
+      .spin {
+        animation-name: spin;
+        animation-duration: 4000ms;
+        animation-iteration-count: infinite;
+        animation-timing-function: linear;
+      }
+
+      .block-title {
+        border-bottom: 1px solid #000;
+        margin-top: 20px;
+        margin-bottom: 0px;
+        font-weight: bold;
+      }
+      .settings-block {
+        display: block;
+      }
+      .setting-name {
+        margin-top: 10px;
+      }
+      .clockwise {
+        display: inline-block;
+        vertical-align: middle;
+      }
+      /* Dropdown Container */
+      .dropdown {
+        position: relative;
+        display: inline-block;
+      }
+
+      /* Dropdown Button */
+      .dropdown-button {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        width: 42px;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        cursor: pointer;
+        background-color: #fff;
+      }
+
+      /* Dropdown List */
+      .dropdown-content {
+        display: none;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        width: 100%;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        background-color: #fff;
+        box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
+        z-index: 10;
+      }
+
+      /* Dropdown List Items */
+      .dropdown-item {
+        display: flex;
+        align-items: center;
+        padding: 10px;
+        cursor: pointer;
+      }
+
+      .dropdown-item:hover {
+        background-color: #f0f0f0;
+      }
+
+      /* Dropdown Item Image */
+      .dropdown-item img {
+        width: 40px;
+        height: 27px;
+        margin-right: 10px;
+        border-radius: 5px;
+      }
+
+      /* Show Dropdown */
+      .dropdown:hover .dropdown-content {
+        display: block;
+      }
+    </style>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400..700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&icon_names=progress_activity,swap_vert"
+      rel="preload"
+      as="style"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&icon_names=progress_activity,swap_vert"
+      rel="stylesheet"
+    />
+    <link
+      href="https://ssl.gstatic.com/docs/script/css/add-ons1.css"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <div id="busy-overlay">
+      <span class="material-symbols-outlined spin">progress_activity</span
+      ><span id="busy-message">Loading...</span>
+    </div>
+    <canvas
+      id="gridCellCanvas"
+      class="preview"
+      width="150"
+      height="100"
+    ></canvas>
+    <div class="row-buttons">
+      <div class="left-buttons">
+        <button onclick="addRow()"><span>+</span></button>
+        <button onclick="removeRow()"><span>-</span></button>
+      </div>
+      <button id="button-clear" class="right-button" onclick="removeAll()">
+        Clear
+      </button>
+    </div>
+    <div id="cells">
+      <div id="row-0" class="grid-row">
+        <span class="row-index">1</span>
+        <div id="div-e0" class="chord-div">
+          <input
+            type="text"
+            id="e0"
+            max="50"
+            class="chord-input"
+            value="Am"
+          /><span class="material-symbols-outlined hidden rotate" id="e0-rotate"
+            >swap_vert</span
+          >
+        </div>
+      </div>
+    </div>
+    <div class="action-panel">
+      <button
+        id="button-insert"
+        class="share full-width"
+        onclick="insertGrid()"
+      >
+        Insert at cursor
+      </button>
+      <button
+        id="button-load"
+        class="action full-width"
+        onclick="loadFromSelection()"
+      >
+        Load from selection
+      </button>
+    </div>
+    <div id="title-settings" class="block-title">Settings</div>
+    <div class="settings-block">
+      <div id="label-output-scale" class="setting-name">Output scale</div>
+      <input type="number" id="scale" min="10" max="100" value="50" />%
+      <div id="label-font" class="setting-name">Font</div>
+      <div class="block form-group font-settings">
+        <select id="font-select" onchange="changeFont()">
+          <option selected>Roboto Mono</option>
+          <option>Courier New</option>
+          <option>Times New Roman</option>
+          <option>Comic Sans MS</option>
+        </select>
+        <input type="checkbox" id="checkbox1" onchange="changeBold()" checked />
+        <label id="label-bold" for="checkbox1">Bold</label>
+      </div>
+      <div id="label-chords-order" class="setting-name">Chords order</div>
+      <div class="dropdown">
+        <!-- Dropdown Button -->
+        <div class="dropdown-button" id="dropdown-button">
+          <img src="" width="40" height="27" id="selected-image" />
+        </div>
+
+        <!-- Dropdown Content -->
+        <div class="dropdown-content">
+          <div class="dropdown-item" onclick="clockwise(true);">
+            <img src="" width="40" height="27" id="clockwise-image" />
+          </div>
+          <div class="dropdown-item" onclick="clockwise(false);">
+            <img src="" width="40" height="27" id="non-clockwise-image" />
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="sidebar bottom">
+      <span class="gray">Chords Grid Crafter</span>
+    </div>
+
+    <script>
+      let LOCALIZED_STRINGS;
+      const CELL_WIDTH = 150;
+      const CELL_HEIGHT = 100;
+      let CLOCKWISE_IMAGE = "";
+      let NON_CLOCKWISE_IMAGE = "";
+      let NEXT_ID = 1;
+      let LAST_FOCUSED = document.getElementById("e0");
+      let CURRENT_MODEL = {
+        o: {
+          c: true, // Clockwise
+          s: 50, // Output scale
+          fs: 42, // Base font size
+          ff: "Roboto Mono", // Base font face
+          fb: true, // Bold
+        },
+        g: {
+          e0: {
+            c: [],
+          },
+        },
+      };
+
+      google.script.run
+        .withSuccessHandler(setLocalizedStrings)
+        .getLocalizedStrings();
+
+      function setLocalizedStrings(strings) {
+        LOCALIZED_STRINGS = strings;
+        document.getElementById("button-clear").innerText =
+          LOCALIZED_STRINGS.buttonClear;
+        document.getElementById("button-insert").innerText =
+          LOCALIZED_STRINGS.buttonInsert;
+        document.getElementById("button-load").innerText =
+          LOCALIZED_STRINGS.buttonLoad;
+        document.getElementById("title-settings").innerText =
+          LOCALIZED_STRINGS.titleSettings;
+        document.getElementById("label-output-scale").innerText =
+          LOCALIZED_STRINGS.labelOutputScale;
+        document.getElementById("label-font").innerText =
+          LOCALIZED_STRINGS.labelFont;
+        document.getElementById("label-chords-order").innerText =
+          LOCALIZED_STRINGS.labelChordsOrder;
+        // document.getElementById("welcome").innerText = strings.welcomeMessage;
+        // document.getElementById("action").innerText = strings.buttonLabel;
+        setBusy(false);
+      }
+
+      function changeFont(event) {
+        const fontSelect = document.getElementById("font-select");
+        const font = fontSelect.options[fontSelect.selectedIndex].value;
+        CURRENT_MODEL.o.ff = font;
+        focusElement(LAST_FOCUSED);
+      }
+
+      function changeBold(event) {
+        const checkbox = document.getElementById("checkbox1");
+        CURRENT_MODEL.o.fb = checkbox.checked;
+        focusElement(LAST_FOCUSED);
+      }
+
+      function getFont(size) {
+        const bold = CURRENT_MODEL.o.fb ? "bold " : "";
+        const fontSize = size ? size : CURRENT_MODEL.o.fs;
+        return `${bold}${fontSize}px "${CURRENT_MODEL.o.ff}"`;
+      }
+
+      function drawGrid(event) {
+        let eventKey = event.key;
+        if (eventKey === "Enter") {
+          if (event.srcElement.parentElement.nextElementSibling) {
+            eventKey = "ArrowDown";
+          } else {
+            addRow();
+            return;
+          }
+        }
+        if (eventKey === "ArrowUp") {
+          event.srcElement.parentElement.previousElementSibling
+            ? focusElement(
+                event.srcElement.parentElement.previousElementSibling
+                  .firstElementChild
+              )
+            : focusElement(event.srcElement);
+          return;
+        }
+        if (eventKey === "ArrowDown") {
+          event.srcElement.parentElement.nextElementSibling
+            ? focusElement(
+                event.srcElement.parentElement.nextElementSibling
+                  .firstElementChild
+              )
+            : focusElement(event.srcElement);
+          return;
+        }
+        const chordElement = event.srcElement;
+        focusElement(chordElement);
+        let chords = chordElement.value
+          .trim()
+          .split(" ")
+          .filter((chord) => chord.length > 0);
+        if (chords.length > 4) {
+          return;
+        } else if (chords.length === 0) {
+          chords = ["-"];
+        }
+
+        const span = document.getElementById(chordElement.id + "-rotate");
+        if (chords.length === 3) {
+          span.classList.remove("hidden");
+        } else {
+          span.classList.add("hidden");
+        }
+
+        CURRENT_MODEL.g[chordElement.id].c = chords;
+
+        const canvas = document.getElementById("gridCellCanvas");
+        const ctx = canvas.getContext("2d");
+
+        drawChords(ctx, CURRENT_MODEL.g[chordElement.id]);
+      }
+
+      function drawChords(ctx, chordData) {
+        const chords = chordData.c;
+        // Set up the font and styles
+        ctx.font = getFont();
+        ctx.fillStyle = "#000";
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+
+        // Clear the canvas
+        ctx.clearRect(0, 0, CELL_WIDTH, CELL_HEIGHT);
+
+        ctx.beginPath();
+        ctx.rect(0, 0, CELL_WIDTH, CELL_HEIGHT);
+
+        let chordCount = chords.length;
+
+        if (chordCount === 1) {
+          // Draw a single centered chord
+          drawChord(
+            ctx,
+            chords[0],
+            CELL_WIDTH,
+            CELL_WIDTH / 2,
+            CELL_HEIGHT / 2
+          );
+        } else if (chordCount === 2) {
+          // Draw 2 chords with a diagonal separator
+          ctx.moveTo(0, CELL_HEIGHT);
+          ctx.lineTo(CELL_WIDTH, 0);
+
+          drawChord(
+            ctx,
+            chords[0],
+            CELL_WIDTH / 2,
+            CELL_WIDTH / 4,
+            CELL_HEIGHT / 3
+          );
+          drawChord(
+            ctx,
+            chords[1],
+            CELL_WIDTH / 2,
+            (3 * CELL_WIDTH) / 4,
+            (2 * CELL_HEIGHT) / 3
+          );
+        } else if (chordCount === 3) {
+          // Draw 3 chords with a diagonal separator
+          ctx.moveTo(0, CELL_HEIGHT);
+          ctx.lineTo(CELL_WIDTH, 0);
+          if (chordData.o?.r === true) {
+            // Rotate ?
+            ctx.moveTo(0, 0);
+            drawChord(
+              ctx,
+              chords[0],
+              CELL_WIDTH / 2,
+              CELL_WIDTH / 6,
+              CELL_HEIGHT / 2
+            );
+            drawChord(
+              ctx,
+              chords[1],
+              CELL_WIDTH / 2,
+              CELL_WIDTH / 2,
+              CELL_HEIGHT / 4
+            );
+            drawChord(
+              ctx,
+              chords[2],
+              CELL_WIDTH / 2,
+              (3 * CELL_WIDTH) / 4,
+              (2 * CELL_HEIGHT) / 3
+            );
+          } else {
+            ctx.moveTo(CELL_WIDTH, CELL_HEIGHT);
+            drawChord(
+              ctx,
+              chords[0],
+              CELL_WIDTH / 2,
+              CELL_WIDTH / 4,
+              CELL_HEIGHT / 3
+            );
+            drawChord(
+              ctx,
+              chords[CURRENT_MODEL.o.c ? 1 : 2],
+              CELL_WIDTH / 2,
+              (5 * CELL_WIDTH) / 6,
+              CELL_HEIGHT / 2
+            );
+            drawChord(
+              ctx,
+              chords[CURRENT_MODEL.o.c ? 2 : 1],
+              CELL_WIDTH / 2,
+              CELL_WIDTH / 2,
+              (4 * CELL_HEIGHT) / 5
+            );
+          }
+          ctx.lineTo(CELL_WIDTH / 2, CELL_HEIGHT / 2);
+        } else if (chordCount === 4) {
+          // Draw 4 chords with a diagonal separator
+          ctx.moveTo(0, 0);
+          ctx.lineTo(CELL_WIDTH, CELL_HEIGHT);
+          ctx.moveTo(0, CELL_HEIGHT);
+          ctx.lineTo(CELL_WIDTH, 0);
+
+          drawChord(
+            ctx,
+            chords[0],
+            (CELL_WIDTH / 2) * 0.9,
+            CELL_WIDTH / 6,
+            CELL_HEIGHT / 2
+          );
+          drawChord(
+            ctx,
+            chords[1],
+            (CELL_WIDTH / 2) * 0.9,
+            CELL_WIDTH / 2,
+            CELL_HEIGHT / 4
+          );
+          drawChord(
+            ctx,
+            chords[CURRENT_MODEL.o.c ? 2 : 3],
+            (CELL_WIDTH / 2) * 0.9,
+            (5 * CELL_WIDTH) / 6,
+            CELL_HEIGHT / 2
+          );
+          drawChord(
+            ctx,
+            chords[CURRENT_MODEL.o.c ? 3 : 2],
+            (CELL_WIDTH / 2) * 0.9,
+            CELL_WIDTH / 2,
+            (4 * CELL_HEIGHT) / 5
+          );
+        }
+        ctx.stroke();
+      }
+
+      function drawChord(ctx, chord, maxWidth, x, y) {
+        const textWidth = ctx.measureText(chord).width;
+        let currentFont = null;
+        if (textWidth > maxWidth) {
+          currentFont = ctx.font;
+          const scale = maxWidth / textWidth;
+          const scaledFontSize = Math.floor(CURRENT_MODEL.o.fs * scale);
+          ctx.font = getFont(scaledFontSize);
+        }
+        ctx.fillStyle = "#000";
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+        ctx.fillText(chord, x, y);
+        if (currentFont != null) {
+          ctx.font = currentFont;
+        }
+      }
+
+      function insertGrid() {
+        const entries = Object.entries(CURRENT_MODEL.g);
+        const canvas = document.createElement("canvas");
+        canvas.setAttribute("width", CELL_WIDTH * entries.length);
+        canvas.setAttribute("height", CELL_HEIGHT);
+        const ctx = canvas.getContext("2d");
+        for (const [key, value] of entries) {
+          drawChords(ctx, value);
+          ctx.translate(CELL_WIDTH, 0);
+        }
+        const imageData = canvas.toDataURL("image/png");
+        const scale = document.getElementById("scale").value;
+        CURRENT_MODEL.o.s = scale;
+
+        setBusy(true, LOCALIZED_STRINGS.messageInserting);
+        google.script.run
+          .withSuccessHandler(() => setBusy(false))
+          .withFailureHandler(() => setBusy(false))
+          .insertImage(imageData, scale, CURRENT_MODEL);
+      }
+
+      function setBusy(busy, message) {
+        if (message) {
+          const busyMessage = document.getElementById("busy-message");
+          busyMessage.firstChild.textContent = message;
+        }
+        const overlay = document.getElementById("busy-overlay");
+        if (busy) {
+          overlay.classList.remove("hidden");
+        } else {
+          overlay.classList.add("hidden");
+        }
+      }
+
+      function addRow(data) {
+        const elementId = "e" + NEXT_ID++;
+        const cells = document.getElementById("cells");
+        if (cells.children.length >= 16) {
+          return;
+        }
+        // DIV row
+        const rowDiv = document.createElement("div");
+        rowDiv.setAttribute("id", "row-" + elementId);
+        rowDiv.setAttribute("class", "grid-row");
+        // SPAN ronw index
+        const rowIndexSpan = document.createElement("span");
+        rowIndexSpan.setAttribute("class", "row-index");
+        const indexText = document.createTextNode(elementId);
+        rowIndexSpan.appendChild(indexText);
+        rowDiv.appendChild(rowIndexSpan);
+
+        const chordDiv = document.createElement("div");
+        chordDiv.setAttribute("id", "div-" + elementId);
+        chordDiv.setAttribute("class", "chord-div");
+        const input = document.createElement("input");
+        input.setAttribute("id", elementId);
+        input.setAttribute("type", "text");
+        input.setAttribute("max", "50");
+        input.setAttribute("class", "chord-input");
+        if (data) {
+          input.value = data.c.join(" ");
+        }
+        chordDiv.append(input);
+        input.addEventListener("keyup", drawGrid);
+        input.addEventListener("focusin", drawGrid);
+        const span = document.createElement("span");
+        span.setAttribute("id", elementId + "-rotate");
+        span.setAttribute("class", "material-symbols-outlined rotate hidden");
+        span.addEventListener("click", rotate);
+        const text = document.createTextNode("swap_vert");
+        span.appendChild(text);
+        chordDiv.append(span);
+        rowDiv.append(chordDiv);
+        cells.append(rowDiv);
+        if (data) {
+          CURRENT_MODEL.g[elementId] = data;
+        } else {
+          CURRENT_MODEL.g[elementId] = { c: [], o: {} };
+        }
+        focusElement(input);
+      }
+
+      function focusElement(element) {
+        LAST_FOCUSED = element;
+        const elements = document.getElementById("cells").children;
+        for (let i = 0; i < elements.length; i++) {
+          const child = elements[i];
+          child.classList.remove("focused");
+        }
+        element.parentElement.classList.add("focused");
+        element.focus();
+      }
+
+      function removeRow() {
+        const keys = Object.keys(CURRENT_MODEL.g);
+        const cells = document.getElementById("cells");
+        if (keys.length > 1) {
+          lastKey = keys[keys.length - 1];
+          const node = document.getElementById("div-" + lastKey);
+          cells.removeChild(node);
+          delete CURRENT_MODEL.g[lastKey];
+        } else {
+          const node = document.getElementById("e0");
+          node.value = "";
+          focusElement(node);
+        }
+      }
+
+      function removeAll(fullClean) {
+        const keys = Object.keys(CURRENT_MODEL.g);
+        const fromIndex = fullClean ? 0 : 1;
+        if (keys.length > fromIndex) {
+          const cells = document.getElementById("cells");
+          for (i = fromIndex; i < keys.length; i++) {
+            lastKey = keys[i];
+            const node = document.getElementById("div-" + lastKey);
+            cells.removeChild(node);
+            delete CURRENT_MODEL.g[lastKey];
+          }
+        }
+        if (!fullClean) {
+          const node = document.getElementById("e0");
+          node.value = "";
+          focusElement(node);
+        }
+      }
+
+      function rotate(event) {
+        const spanElement = event.srcElement;
+        const cellId = spanElement.id.split("-")[0];
+        if (CURRENT_MODEL.g[cellId].o?.r) {
+          delete CURRENT_MODEL.g[cellId].o.r;
+        } else {
+          if (!CURRENT_MODEL.g[cellId].o) {
+            CURRENT_MODEL.g[cellId].o = {};
+          }
+          CURRENT_MODEL.g[cellId].o.r = true;
+        }
+        focusElement(document.getElementById(cellId));
+      }
+
+      function drawClockwise(clockwise) {
+        const WIDTH = 40;
+        const HEIGHT = 27;
+        const canvas = document.createElement("canvas");
+        canvas.width = WIDTH;
+        canvas.height = HEIGHT;
+        const ctx = canvas.getContext("2d");
+        ctx.fillStyle = "#000";
+        ctx.beginPath();
+        ctx.rect(0, 0, WIDTH, HEIGHT);
+        ctx.moveTo(0, 0);
+        ctx.lineTo(WIDTH, HEIGHT);
+        ctx.moveTo(0, HEIGHT);
+        ctx.lineTo(WIDTH, 0);
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.arc(WIDTH / 5, HEIGHT / 2, 2, 0, 2 * Math.PI);
+        ctx.fill();
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.arc((4 * WIDTH) / 5, HEIGHT / 2, 2, 0, 2 * Math.PI);
+        ctx.fill();
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.arc(WIDTH / 2, HEIGHT / 4, 2, 0, 2 * Math.PI);
+        ctx.fill();
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.arc(WIDTH / 2, (3 * HEIGHT) / 4, 2, 0, 2 * Math.PI);
+        ctx.fill();
+        ctx.stroke();
+
+        ctx.lineWidth = 3;
+        ctx.strokeStyle = "#f00";
+        ctx.moveTo(WIDTH / 5, HEIGHT / 2);
+        ctx.lineTo(WIDTH / 2, HEIGHT / 4);
+        if (clockwise) {
+          ctx.lineTo((4 * WIDTH) / 5, HEIGHT / 2);
+          ctx.lineTo(WIDTH / 2, (3 * HEIGHT) / 4);
+        } else {
+          ctx.lineTo(WIDTH / 2, (3 * HEIGHT) / 4);
+          ctx.lineTo((4 * WIDTH) / 5, HEIGHT / 2);
+        }
+        ctx.stroke();
+        return canvas.toDataURL("image/png");
+      }
+
+      function clockwise(clockwise) {
+        CURRENT_MODEL.o.c = clockwise;
+        let imageSrc;
+        if (clockwise) {
+          imageSrc = CLOCKWISE_IMAGE;
+        } else {
+          imageSrc = NON_CLOCKWISE_IMAGE;
+        }
+        const selectedImage = document.getElementById("selected-image");
+        selectedImage.setAttribute("src", imageSrc);
+
+        focusElement(LAST_FOCUSED);
+      }
+
+      function loadFromSelection() {
+        setBusy(true, LOCALIZED_STRINGS.messageLoadingSelection);
+        google.script.run
+          .withSuccessHandler(selectionLoaded)
+          .withFailureHandler(selectionLoaded)
+          .loadFromSelection();
+      }
+
+      function selectionLoaded(cgcModel) {
+        setBusy(false);
+        if (cgcModel) {
+          removeAll(true);
+          CURRENT_MODEL = {
+            o: cgcModel.o,
+            g: {},
+          };
+
+          NEXT_ID = 0;
+          const keys = Object.keys(cgcModel.g).sort((a, b) => {
+            if (parseInt(a.substring(1)) > parseInt(b.substring(1))) {
+              return 1;
+            }
+            return -1;
+          });
+          for (const key of keys) {
+            addRow(cgcModel.g[key]);
+          }
+          clockwise(CURRENT_MODEL.o.c);
+          const firstInput = document.getElementById("e0");
+          focusElement(firstInput);
+        } else {
+          console.log("Nothing to load");
+        }
+      }
+
+      document.fonts.ready.then(() => {
+        const firstInput = document.getElementById("e0");
+        firstInput.addEventListener("keyup", drawGrid);
+        firstInput.addEventListener("focusin", drawGrid);
+        focusElement(firstInput);
+        const firstSpan = document.getElementById("e0-rotate");
+        firstSpan.addEventListener("click", rotate);
+
+        CLOCKWISE_IMAGE = drawClockwise(true);
+        NON_CLOCKWISE_IMAGE = drawClockwise(false);
+        const clockwiseSelect = document.getElementById("clockwise-image");
+        clockwiseSelect.setAttribute("src", CLOCKWISE_IMAGE);
+        const nonClockwiseSelect = document.getElementById(
+          "non-clockwise-image"
+        );
+        nonClockwiseSelect.setAttribute("src", NON_CLOCKWISE_IMAGE);
+        clockwise(true);
+      });
+    </script>
+  </body>
+</html>
