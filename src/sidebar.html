@@ -227,22 +227,7 @@
         Clear
       </button>
     </div>
-    <div id="cells">
-      <div id="row-0" class="grid-row">
-        <span class="row-index">1</span>
-        <div id="div-e0" class="chord-div">
-          <input
-            type="text"
-            id="e0"
-            max="50"
-            class="chord-input"
-            value="Am"
-          /><span class="material-symbols-outlined hidden rotate" id="e0-rotate"
-            >swap_vert</span
-          >
-        </div>
-      </div>
-    </div>
+    <div id="grid-elements"></div>
     <div class="action-panel">
       <button
         id="button-insert"
@@ -302,8 +287,7 @@
       const CELL_HEIGHT = 100;
       let CLOCKWISE_IMAGE = "";
       let NON_CLOCKWISE_IMAGE = "";
-      let NEXT_ID = 1;
-      let LAST_FOCUSED = document.getElementById("e0");
+      let LAST_FOCUSED;
       let CURRENT_MODEL = {
         o: {
           c: true, // Clockwise
@@ -312,11 +296,7 @@
           ff: "Roboto Mono", // Base font face
           fb: true, // Bold
         },
-        g: {
-          e0: {
-            c: [],
-          },
-        },
+        g: {},
       };
 
       google.script.run
@@ -363,35 +343,41 @@
         return `${bold}${fontSize}px "${CURRENT_MODEL.o.ff}"`;
       }
 
-      function drawGrid(event) {
+      function onFocusIn(event) {
+        drawGrid(event);
+      }
+
+      function onKeyUp(event) {
         let eventKey = event.key;
+        // Split element id: chord-input-12
+        const chordIndex = Number.parseInt(event.srcElement.id.split("-")[2]);
+        const gridElements = document.getElementById("grid-elements");
         if (eventKey === "Enter") {
-          if (event.srcElement.parentElement.nextElementSibling) {
-            eventKey = "ArrowDown";
-          } else {
+          if (chordIndex === gridElements.children.length - 1) {
             addRow();
             return;
           }
         }
+        let nextInput = null;
         if (eventKey === "ArrowUp") {
-          event.srcElement.parentElement.previousElementSibling
-            ? focusElement(
-                event.srcElement.parentElement.previousElementSibling
-                  .firstElementChild
-              )
-            : focusElement(event.srcElement);
+          nextInput = document.getElementById(
+            "chord-input-" + (chordIndex - 1)
+          );
+        } else if (eventKey === "ArrowDown" || eventKey === "Enter") {
+          nextInput = document.getElementById(
+            "chord-input-" + (chordIndex + 1)
+          );
+        }
+        if (nextInput !== null) {
+          focusElement(nextInput);
           return;
         }
-        if (eventKey === "ArrowDown") {
-          event.srcElement.parentElement.nextElementSibling
-            ? focusElement(
-                event.srcElement.parentElement.nextElementSibling
-                  .firstElementChild
-              )
-            : focusElement(event.srcElement);
-          return;
-        }
+        drawGrid(event);
+      }
+
+      function drawGrid(event) {
         const chordElement = event.srcElement;
+        const chordIndex = chordElement.id.split("-")[2];
         focusElement(chordElement);
         let chords = chordElement.value
           .trim()
@@ -403,19 +389,19 @@
           chords = ["-"];
         }
 
-        const span = document.getElementById(chordElement.id + "-rotate");
+        const span = document.getElementById("chord-rotate-" + chordIndex);
         if (chords.length === 3) {
           span.classList.remove("hidden");
         } else {
           span.classList.add("hidden");
         }
 
-        CURRENT_MODEL.g[chordElement.id].c = chords;
+        CURRENT_MODEL.g[chordIndex].c = chords;
 
         const canvas = document.getElementById("gridCellCanvas");
         const ctx = canvas.getContext("2d");
 
-        drawChords(ctx, CURRENT_MODEL.g[chordElement.id]);
+        drawChords(ctx, CURRENT_MODEL.g[chordIndex]);
       }
 
       function drawChords(ctx, chordData) {
@@ -607,95 +593,72 @@
       }
 
       function addRow(data) {
-        const elementId = "e" + NEXT_ID++;
-        const cells = document.getElementById("cells");
-        if (cells.children.length >= 16) {
+        const gridElements = document.getElementById("grid-elements");
+        if (gridElements.children.length >= 16) {
           return;
         }
-        // DIV row
-        const rowDiv = document.createElement("div");
-        rowDiv.setAttribute("id", "row-" + elementId);
-        rowDiv.setAttribute("class", "grid-row");
-        // SPAN ronw index
-        const rowIndexSpan = document.createElement("span");
-        rowIndexSpan.setAttribute("class", "row-index");
-        const indexText = document.createTextNode(elementId);
-        rowIndexSpan.appendChild(indexText);
-        rowDiv.appendChild(rowIndexSpan);
+        const newIndex = gridElements.children.length;
 
-        const chordDiv = document.createElement("div");
-        chordDiv.setAttribute("id", "div-" + elementId);
-        chordDiv.setAttribute("class", "chord-div");
-        const input = document.createElement("input");
-        input.setAttribute("id", elementId);
-        input.setAttribute("type", "text");
-        input.setAttribute("max", "50");
-        input.setAttribute("class", "chord-input");
+        const newRow = `<div id="row-${newIndex}" class="grid-row">
+          <span class="row-index">${newIndex + 1}</span>
+          <div id="chord-div-${newIndex}" class="chord-div focused">
+            <input id="chord-input-${newIndex}" type="text" max="50" class="chord-input">
+            <span id="chord-rotate-${newIndex}" class="material-symbols-outlined rotate hidden">swap_vert</span>
+          </div>
+        </div>`;
+        const newRowElement = document.createElement("template");
+        newRowElement.innerHTML = newRow;
+        gridElements.append(newRowElement.content.firstElementChild);
+
+        const newInput = document.getElementById("chord-input-" + newIndex);
+        newInput.addEventListener("keyup", onKeyUp);
+        newInput.addEventListener("focusin", onFocusIn);
         if (data) {
-          input.value = data.c.join(" ");
+          newInput.value = data.c.join(" ");
         }
-        chordDiv.append(input);
-        input.addEventListener("keyup", drawGrid);
-        input.addEventListener("focusin", drawGrid);
-        const span = document.createElement("span");
-        span.setAttribute("id", elementId + "-rotate");
-        span.setAttribute("class", "material-symbols-outlined rotate hidden");
-        span.addEventListener("click", rotate);
-        const text = document.createTextNode("swap_vert");
-        span.appendChild(text);
-        chordDiv.append(span);
-        rowDiv.append(chordDiv);
-        cells.append(rowDiv);
+        const newRotateButton = document.getElementById(
+          "chord-rotate-" + newIndex
+        );
+        newRotateButton.addEventListener("click", rotate);
+
         if (data) {
-          CURRENT_MODEL.g[elementId] = data;
+          CURRENT_MODEL.g[newIndex] = data;
         } else {
-          CURRENT_MODEL.g[elementId] = { c: [], o: {} };
+          CURRENT_MODEL.g[newIndex] = { c: [], o: {} };
         }
-        focusElement(input);
+        focusElement(newInput);
       }
 
       function focusElement(element) {
         LAST_FOCUSED = element;
-        const elements = document.getElementById("cells").children;
-        for (let i = 0; i < elements.length; i++) {
-          const child = elements[i];
-          child.classList.remove("focused");
-        }
+        const elements = document.querySelectorAll(".chord-div");
+        elements.forEach((element) => {
+          element.classList.remove("focused");
+        });
         element.parentElement.classList.add("focused");
         element.focus();
       }
 
       function removeRow() {
-        const keys = Object.keys(CURRENT_MODEL.g);
-        const cells = document.getElementById("cells");
-        if (keys.length > 1) {
-          lastKey = keys[keys.length - 1];
-          const node = document.getElementById("div-" + lastKey);
-          cells.removeChild(node);
-          delete CURRENT_MODEL.g[lastKey];
-        } else {
-          const node = document.getElementById("e0");
-          node.value = "";
-          focusElement(node);
+        const gridElements = document.getElementById("grid-elements");
+        if (gridElements.children.length === 1) {
+          return;
         }
+        const indexToRemove = gridElements.children.length - 1;
+        gridElements.removeChild(gridElements.lastElementChild);
+        delete CURRENT_MODEL.g[indexToRemove];
+        const chordInput = document.getElementById(
+          "chord-input-" + (indexToRemove - 1)
+        );
+        focusElement(chordInput);
       }
 
       function removeAll(fullClean) {
-        const keys = Object.keys(CURRENT_MODEL.g);
-        const fromIndex = fullClean ? 0 : 1;
-        if (keys.length > fromIndex) {
-          const cells = document.getElementById("cells");
-          for (i = fromIndex; i < keys.length; i++) {
-            lastKey = keys[i];
-            const node = document.getElementById("div-" + lastKey);
-            cells.removeChild(node);
-            delete CURRENT_MODEL.g[lastKey];
-          }
-        }
+        const gridElements = document.getElementById("grid-elements");
+        gridElements.replaceChildren();
+        CURRENT_MODEL.g = {};
         if (!fullClean) {
-          const node = document.getElementById("e0");
-          node.value = "";
-          focusElement(node);
+          addRow({ c: ["Am"] });
         }
       }
 
@@ -791,18 +754,12 @@
             g: {},
           };
 
-          NEXT_ID = 0;
-          const keys = Object.keys(cgcModel.g).sort((a, b) => {
-            if (parseInt(a.substring(1)) > parseInt(b.substring(1))) {
-              return 1;
-            }
-            return -1;
-          });
-          for (const key of keys) {
-            addRow(cgcModel.g[key]);
+          const elementCount = Object.keys(cgcModel.g).length;
+          for (let i = 0; i < elementCount; i++) {
+            addRow(cgcModel.g[i]);
           }
           clockwise(CURRENT_MODEL.o.c);
-          const firstInput = document.getElementById("e0");
+          const firstInput = document.getElementById("chord-input-0");
           focusElement(firstInput);
         } else {
           console.log("Nothing to load");
@@ -810,12 +767,7 @@
       }
 
       document.fonts.ready.then(() => {
-        const firstInput = document.getElementById("e0");
-        firstInput.addEventListener("keyup", drawGrid);
-        firstInput.addEventListener("focusin", drawGrid);
-        focusElement(firstInput);
-        const firstSpan = document.getElementById("e0-rotate");
-        firstSpan.addEventListener("click", rotate);
+        addRow({ c: ["Am"] });
 
         CLOCKWISE_IMAGE = drawClockwise(true);
         NON_CLOCKWISE_IMAGE = drawClockwise(false);
