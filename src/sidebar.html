@@ -250,21 +250,24 @@
       <input type="number" id="scale" min="10" max="100" value="50" />%
       <div id="label-font" class="setting-name">Font</div>
       <div class="block form-group font-settings">
-        <select id="font-select" onchange="changeFont()">
-          <option selected>Roboto Mono</option>
-          <option>Courier New</option>
-          <option>Times New Roman</option>
-          <option>Comic Sans MS</option>
+        <select id="select-font" onchange="changeFont()">
+          <option value="Roboto Mono" selected>Roboto Mono</option>
+          <option value="Courier New">Courier New</option>
+          <option value="Times New Roman">Times New Roman</option>
+          <option value="Comic Sans MS">Comic Sans MS</option>
         </select>
-        <input type="checkbox" id="checkbox1" onchange="changeBold()" checked />
-        <label id="label-bold" for="checkbox1">Bold</label>
+        <input
+          type="checkbox"
+          id="checkbox-bold"
+          onchange="changeBold()"
+          checked
+        />
+        <label id="label-bold" for="checkbox-bold">Bold</label>
       </div>
       <div id="label-chords-order" class="setting-name">Chords order</div>
       <div class="dropdown">
         <!-- Dropdown Button -->
-        <div class="dropdown-button" id="dropdown-button">
-          <img src="" width="40" height="27" id="selected-image" />
-        </div>
+        <div class="dropdown-button" id="dropdown-button"></div>
 
         <!-- Dropdown Content -->
         <div class="dropdown-content">
@@ -306,19 +309,27 @@
     </div>
 
     <script>
+      /**
+       * Chords Grid Crafter Script section
+       */
       let LOCALIZED_STRINGS;
       const CELL_WIDTH = 150;
       const CELL_HEIGHT = 100;
       let LAST_FOCUSED;
-      let CURRENT_MODEL = {
-        o: {
-          c: true, // Clockwise
-          s: 50, // Output scale
-          fs: 42, // Base font size
-          ff: "Roboto Mono", // Base font face
-          fb: true, // Bold
+      let CURRENT_MODEL = {};
+      let DEFAULT_MODEL = {
+        settings: {
+          clockwise: true, // Clockwise
+          scale: 50, // Output scale
+          font: {
+            size: 42,
+            face: "Roboto Mono",
+            bold: true,
+          },
         },
-        g: {},
+        g: {
+          0: { c: ["Am"] },
+        },
       };
 
       if (typeof google !== "undefined") {
@@ -349,22 +360,22 @@
       }
 
       function changeFont(event) {
-        const fontSelect = document.getElementById("font-select");
+        const fontSelect = document.getElementById("select-font");
         const font = fontSelect.options[fontSelect.selectedIndex].value;
-        CURRENT_MODEL.o.ff = font;
+        CURRENT_MODEL.settings.font.face = font;
         focusElement(LAST_FOCUSED);
       }
 
       function changeBold(event) {
-        const checkbox = document.getElementById("checkbox1");
-        CURRENT_MODEL.o.fb = checkbox.checked;
+        const checkbox = document.getElementById("checkbox-bold");
+        CURRENT_MODEL.settings.font.bold = checkbox.checked;
         focusElement(LAST_FOCUSED);
       }
 
       function getFont(size) {
-        const bold = CURRENT_MODEL.o.fb ? "bold " : "";
-        const fontSize = size ? size : CURRENT_MODEL.o.fs;
-        return `${bold}${fontSize}px "${CURRENT_MODEL.o.ff}"`;
+        const bold = CURRENT_MODEL.settings.font.bold ? "bold " : "";
+        const fontSize = size ? size : CURRENT_MODEL.settings.font.size;
+        return `${bold}${fontSize}px "${CURRENT_MODEL.settings.font.face}"`;
       }
 
       function onFocusIn(event) {
@@ -511,14 +522,14 @@
             );
             drawChord(
               ctx,
-              chords[CURRENT_MODEL.o.c ? 1 : 2],
+              chords[CURRENT_MODEL.settings.cw ? 1 : 2],
               CELL_WIDTH / 2,
               (5 * CELL_WIDTH) / 6,
               CELL_HEIGHT / 2
             );
             drawChord(
               ctx,
-              chords[CURRENT_MODEL.o.c ? 2 : 1],
+              chords[CURRENT_MODEL.settings.cw ? 2 : 1],
               CELL_WIDTH / 2,
               CELL_WIDTH / 2,
               (4 * CELL_HEIGHT) / 5
@@ -548,14 +559,14 @@
           );
           drawChord(
             ctx,
-            chords[CURRENT_MODEL.o.c ? 2 : 3],
+            chords[CURRENT_MODEL.settings.cw ? 2 : 3],
             (CELL_WIDTH / 2) * 0.9,
             (5 * CELL_WIDTH) / 6,
             CELL_HEIGHT / 2
           );
           drawChord(
             ctx,
-            chords[CURRENT_MODEL.o.c ? 3 : 2],
+            chords[CURRENT_MODEL.settings.cw ? 3 : 2],
             (CELL_WIDTH / 2) * 0.9,
             CELL_WIDTH / 2,
             (4 * CELL_HEIGHT) / 5
@@ -570,7 +581,9 @@
         if (textWidth > maxWidth) {
           currentFont = ctx.font;
           const scale = maxWidth / textWidth;
-          const scaledFontSize = Math.floor(CURRENT_MODEL.o.fs * scale);
+          const scaledFontSize = Math.floor(
+            CURRENT_MODEL.settings.font.size * scale
+          );
           ctx.font = getFont(scaledFontSize);
         }
         ctx.fillStyle = "#000";
@@ -594,7 +607,7 @@
         }
         const imageData = canvas.toDataURL("image/png");
         const scale = document.getElementById("scale").value;
-        CURRENT_MODEL.o.s = scale;
+        CURRENT_MODEL.settings.scale = scale;
 
         setBusy(true, LOCALIZED_STRINGS.messageInserting);
         google.script.run
@@ -701,7 +714,7 @@
       }
 
       function clockwise(clockwise) {
-        CURRENT_MODEL.o.c = clockwise;
+        CURRENT_MODEL.settings.cw = clockwise;
         let clockwiseImage;
         if (clockwise) {
           clockwiseImage = document.getElementById("clockwise-image");
@@ -726,7 +739,7 @@
         if (cgcModel) {
           removeAll(true);
           CURRENT_MODEL = {
-            o: cgcModel.o,
+            settings: cgcModel.settings,
             g: {},
           };
 
@@ -734,7 +747,19 @@
           for (let i = 0; i < elementCount; i++) {
             addRow(cgcModel.g[i]);
           }
-          clockwise(CURRENT_MODEL.o.c);
+          // Apply clockwise setting
+          clockwise(CURRENT_MODEL.settings.cw);
+
+          // Apply font setting
+          const fontDropdown = document.getElementById("select-font");
+          Array.from(fontDropdown.options).forEach((option) => {
+            option.selected = option.value === CURRENT_MODEL.settings.font.face;
+          });
+
+          // Apply bold setting
+          const checkbox = document.getElementById("checkbox-bold");
+          checkbox.checked = CURRENT_MODEL.settings.font.bold;
+
           const firstInput = document.getElementById("chord-input-0");
           focusElement(firstInput);
         } else {
@@ -743,8 +768,7 @@
       }
 
       document.fonts.ready.then(() => {
-        addRow({ c: ["Am"] });
-        clockwise(true);
+        selectionLoaded(DEFAULT_MODEL);
       });
     </script>
   </body>
