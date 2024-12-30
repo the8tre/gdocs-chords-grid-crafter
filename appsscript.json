@@ -2,5 +2,18 @@
   "timeZone": "Europe/Paris",
   "dependencies": {},
   "exceptionLogging": "STACKDRIVER",
-  "runtimeVersion": "V8"
+  "oauthScopes": [
+    "https://www.googleapis.com/auth/documents.currentonly",
+    "https://www.googleapis.com/auth/script.container.ui"
+  ],
+  "runtimeVersion": "V8",
+  "addOns": {
+    "common": {
+      "name": "Chords Grid Crafter",
+      "logoUrl": "https://the8tre.github.io/gdocs-chords-grid-crafter/assets/images/cgc-logo-white.png",
+      "openLinkUrlPrefixes": [
+        "https://the8tre.github.io/gdocs-chords-grid-crafter/"
+      ]
+    }
+  }
 }

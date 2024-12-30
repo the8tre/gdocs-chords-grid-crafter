@@ -1,0 +1,6 @@
+**/**
+!appsscript.json
+!build/src/*.js
+!build/src/*.ts
+!src/*.ts
+!src/*.html
