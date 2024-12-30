@@ -269,10 +269,34 @@
         <!-- Dropdown Content -->
         <div class="dropdown-content">
           <div class="dropdown-item" onclick="clockwise(true);">
-            <img src="" width="40" height="27" id="clockwise-image" />
+            <!-- prettier-ignore -->
+            <svg width="40" height="27" id="clockwise-image">
+              <rect width="40" height="27" fill="#fff" stroke="#000" stroke-width="1"></rect>
+              <circle cx="8" cy="13.5" r="2" fill="#000" stroke="#000"></circle>
+              <circle cx="32" cy="13.5" r="2" fill="#000" stroke="#000"></circle>
+              <circle cx="20" cy="6.75" r="2" fill="#000" stroke="#000"></circle>
+              <circle cx="20" cy="20.25" r="2" fill="#000" stroke="#000"></circle>
+              <line fill="#fff" stroke="#000" stroke-width="1" x1="0" y1="0" x2="40" y2="27"></line>
+              <line fill="#fff" stroke="#000" stroke-width="1" x1="0" y1="27" x2="40" y2="0"></line>
+              <line x1="8" y1="13.5" x2="20" y2="6.75" stroke="#f00" stroke-width="3"></line>
+              <line x1="20" y1="6.75" x2="32" y2="13.5" stroke="#f00" stroke-width="3"></line>
+              <line x1="32" y1="13.5" x2="20" y2="20.25" stroke="#f00" stroke-width="3"></line>
+            </svg>
           </div>
           <div class="dropdown-item" onclick="clockwise(false);">
-            <img src="" width="40" height="27" id="non-clockwise-image" />
+            <!-- prettier-ignore -->
+            <svg width="40" height="27" id="non-clockwise-image">
+              <rect width="40" height="27" fill="#fff" stroke="#000" stroke-width="1"></rect>
+              <circle cx="8" cy="13.5" r="2" fill="#000" stroke="#000"></circle>
+              <circle cx="32" cy="13.5" r="2" fill="#000" stroke="#000"></circle>
+              <circle cx="20" cy="6.75" r="2" fill="#000" stroke="#000"></circle>
+              <circle cx="20" cy="20.25" r="2" fill="#000" stroke="#000"></circle>
+              <line fill="#fff" stroke="#000" stroke-width="1" x1="0" y1="0" x2="40" y2="27"></line>
+              <line fill="#fff" stroke="#000" stroke-width="1" x1="0" y1="27" x2="40" y2="0"></line>
+              <line x1="8" y1="13.5" x2="20" y2="6.75" stroke="#f00" stroke-width="3"></line>
+              <line x1="20" y1="6.75" x2="20" y2="20.25" stroke="#f00" stroke-width="3"></line>
+              <line x1="32" y1="13.5" x2="20" y2="20.25" stroke="#f00" stroke-width="3"></line>
+            </svg>
           </div>
         </div>
       </div>
@@ -285,8 +309,6 @@
       let LOCALIZED_STRINGS;
       const CELL_WIDTH = 150;
       const CELL_HEIGHT = 100;
-      let CLOCKWISE_IMAGE = "";
-      let NON_CLOCKWISE_IMAGE = "";
       let LAST_FOCUSED;
       let CURRENT_MODEL = {
         o: {
@@ -299,9 +321,13 @@
         g: {},
       };
 
-      google.script.run
-        .withSuccessHandler(setLocalizedStrings)
-        .getLocalizedStrings();
+      if (typeof google !== "undefined") {
+        google.script.run
+          .withSuccessHandler(setLocalizedStrings)
+          .getLocalizedStrings();
+      } else {
+        setBusy(false);
+      }
 
       function setLocalizedStrings(strings) {
         LOCALIZED_STRINGS = strings;
@@ -319,8 +345,6 @@
           LOCALIZED_STRINGS.labelFont;
         document.getElementById("label-chords-order").innerText =
           LOCALIZED_STRINGS.labelChordsOrder;
-        // document.getElementById("welcome").innerText = strings.welcomeMessage;
-        // document.getElementById("action").innerText = strings.buttonLabel;
         setBusy(false);
       }
 
@@ -676,64 +700,16 @@
         focusElement(document.getElementById(cellId));
       }
 
-      function drawClockwise(clockwise) {
-        const WIDTH = 40;
-        const HEIGHT = 27;
-        const canvas = document.createElement("canvas");
-        canvas.width = WIDTH;
-        canvas.height = HEIGHT;
-        const ctx = canvas.getContext("2d");
-        ctx.fillStyle = "#000";
-        ctx.beginPath();
-        ctx.rect(0, 0, WIDTH, HEIGHT);
-        ctx.moveTo(0, 0);
-        ctx.lineTo(WIDTH, HEIGHT);
-        ctx.moveTo(0, HEIGHT);
-        ctx.lineTo(WIDTH, 0);
-        ctx.stroke();
-        ctx.beginPath();
-        ctx.arc(WIDTH / 5, HEIGHT / 2, 2, 0, 2 * Math.PI);
-        ctx.fill();
-        ctx.stroke();
-        ctx.beginPath();
-        ctx.arc((4 * WIDTH) / 5, HEIGHT / 2, 2, 0, 2 * Math.PI);
-        ctx.fill();
-        ctx.stroke();
-        ctx.beginPath();
-        ctx.arc(WIDTH / 2, HEIGHT / 4, 2, 0, 2 * Math.PI);
-        ctx.fill();
-        ctx.stroke();
-        ctx.beginPath();
-        ctx.arc(WIDTH / 2, (3 * HEIGHT) / 4, 2, 0, 2 * Math.PI);
-        ctx.fill();
-        ctx.stroke();
-
-        ctx.lineWidth = 3;
-        ctx.strokeStyle = "#f00";
-        ctx.moveTo(WIDTH / 5, HEIGHT / 2);
-        ctx.lineTo(WIDTH / 2, HEIGHT / 4);
-        if (clockwise) {
-          ctx.lineTo((4 * WIDTH) / 5, HEIGHT / 2);
-          ctx.lineTo(WIDTH / 2, (3 * HEIGHT) / 4);
-        } else {
-          ctx.lineTo(WIDTH / 2, (3 * HEIGHT) / 4);
-          ctx.lineTo((4 * WIDTH) / 5, HEIGHT / 2);
-        }
-        ctx.stroke();
-        return canvas.toDataURL("image/png");
-      }
-
       function clockwise(clockwise) {
         CURRENT_MODEL.o.c = clockwise;
-        let imageSrc;
+        let clockwiseImage;
         if (clockwise) {
-          imageSrc = CLOCKWISE_IMAGE;
+          clockwiseImage = document.getElementById("clockwise-image");
         } else {
-          imageSrc = NON_CLOCKWISE_IMAGE;
+          clockwiseImage = document.getElementById("non-clockwise-image");
         }
-        const selectedImage = document.getElementById("selected-image");
-        selectedImage.setAttribute("src", imageSrc);
-
+        const clockwiseSelect = document.getElementById("dropdown-button");
+        clockwiseSelect.replaceChildren(clockwiseImage.cloneNode(true));
         focusElement(LAST_FOCUSED);
       }
 
@@ -768,15 +744,6 @@
 
       document.fonts.ready.then(() => {
         addRow({ c: ["Am"] });
-
-        CLOCKWISE_IMAGE = drawClockwise(true);
-        NON_CLOCKWISE_IMAGE = drawClockwise(false);
-        const clockwiseSelect = document.getElementById("clockwise-image");
-        clockwiseSelect.setAttribute("src", CLOCKWISE_IMAGE);
-        const nonClockwiseSelect = document.getElementById(
-          "non-clockwise-image"
-        );
-        nonClockwiseSelect.setAttribute("src", NON_CLOCKWISE_IMAGE);
         clockwise(true);
       });
     </script>
