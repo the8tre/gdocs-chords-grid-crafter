@@ -8,7 +8,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "lint": "gts lint",
     "clean": "gts clean",
-    "compile": "tsc",
+    "build": "tsc",
     "dev": "clasp push --watch --force",
     "fix": "gts fix"
   },
@@ -27,8 +27,8 @@
     "@types/google-apps-script": "^1.0.89"
   },
   "devDependencies": {
-    "@types/node": "^20",
-    "gts": "^6.0.2",
-    "typescript": "^5.7.2"
+    "@types/node": "^20.8.9",
+    "gts": "^5.2.0",
+    "typescript": "^5.2.2"
   }
 }

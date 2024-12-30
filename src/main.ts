@@ -14,7 +14,6 @@ function showChordGridPanel() {
 
 function insertImage(base64Image: string, scale: number, cgcModel: any) {
   const doc = DocumentApp.getActiveDocument();
-
   let insertedElement = null;
   const cursor = doc.getCursor();
   const selection = doc.getSelection();
@@ -52,7 +51,7 @@ function insertImage(base64Image: string, scale: number, cgcModel: any) {
 function getImageBlob(base64Image: string) {
   // Decode base64 image and create a blob
   const decodedImage = Utilities.base64Decode(base64Image.split(",")[1]);
-  const blob = Utilities.newBlob(decodedImage, "image/png", "chord-grid.png");
+  const blob = Utilities.newBlob(decodedImage, "image/png", "chords-grid.png");
   return blob;
 }
 
@@ -72,8 +71,8 @@ function loadFromSelection() {
               description.substring("CGC_DATA".length)
             );
             return cgcModel;
-          } catch (e) {
-            console.log(e);
+          } catch {
+            return null;
           }
         }
       }
@@ -83,7 +82,6 @@ function loadFromSelection() {
 }
 
 function getLocalizedStrings(): any {
-  const locale = Session.getActiveUserLocale(); // E.g., "en", "fr"
   const strings: any = {
     en: {
       buttonInsert: "Insert / Replace",
@@ -119,5 +117,6 @@ function getLocalizedStrings(): any {
     },
   };
 
+  const locale = Session.getActiveUserLocale(); // E.g., "en", "fr"
   return strings[locale] || strings["en"]; // Default to English if locale not found
 }
