@@ -701,16 +701,16 @@
 
       function rotate(event) {
         const spanElement = event.srcElement;
-        const cellId = spanElement.id.split("-")[0];
-        if (CURRENT_MODEL.g[cellId].o?.r) {
-          delete CURRENT_MODEL.g[cellId].o.r;
+        const elementIndex = spanElement.id.split("-")[2];
+        if (CURRENT_MODEL.g[elementIndex].o?.r) {
+          delete CURRENT_MODEL.g[elementIndex].o.r;
         } else {
-          if (!CURRENT_MODEL.g[cellId].o) {
-            CURRENT_MODEL.g[cellId].o = {};
+          if (!CURRENT_MODEL.g[elementIndex].o) {
+            CURRENT_MODEL.g[elementIndex].o = {};
           }
-          CURRENT_MODEL.g[cellId].o.r = true;
+          CURRENT_MODEL.g[elementIndex].o.r = true;
         }
-        focusElement(document.getElementById(cellId));
+        focusElement(document.getElementById("chord-input-" + elementIndex));
       }
 
       function clockwise(clockwise) {

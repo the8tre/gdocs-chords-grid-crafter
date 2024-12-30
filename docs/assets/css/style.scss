@@ -1,3 +1,17 @@
 ---
 ---
 @import "{{ site.theme }}";
+
+.navigation {
+    margin: 10px;
+    color: #fff;
+    font-size: 22px;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+#google_translate_element {
+    position: absolute;
+        top: 50px;
+        right: 0px;
+}
