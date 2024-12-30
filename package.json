@@ -1,5 +1,5 @@
 {
-  "name": "gsdocs-chords-grid-crafter",
+  "name": "gdocs-chords-grid-crafter",
   "version": "1.0.0",
   "description": "Create chords grids in Google Docs",
   "main": "build/src/main.js",
@@ -14,14 +14,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/the8tre/gsdocs-chords-grid-crafter.git"
+    "url": "git+https://github.com/the8tre/gdocs-chords-grid-crafter.git"
   },
   "author": "ludovic.engrand@gmail.com",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/the8tre/gsdocs-chords-grid-crafter/issues"
+    "url": "https://github.com/the8tre/gdocs-chords-grid-crafter/issues"
   },
-  "homepage": "https://github.com/the8tre/gsdocs-chords-grid-crafter#readme",
+  "homepage": "https://github.com/the8tre/gdocs-chords-grid-crafter#readme",
   "dependencies": {
     "@google/clasp": "^2.4.2",
     "@types/google-apps-script": "^1.0.89"
