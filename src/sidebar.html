@@ -346,7 +346,8 @@
           },
         },
         g: {
-          0: { c: ["A", "B", "C", "D"] },
+          // 0: { c: ["A", "B", "C", "D"] },
+          0: { c: ["A", "B"] },
         },
       };
 
@@ -479,14 +480,14 @@
 
         if (chordCount === 1) {
           // Draw a single centered chord
-          drawChordEx(ctx, chords[0], ChordLocation.CENTER);
+          drawChord(ctx, chords[0], ChordLocation.CENTER);
         } else if (chordCount === 2) {
           // Draw 2 chords with a diagonal separator
           ctx.moveTo(0, CELL_HEIGHT);
           ctx.lineTo(CELL_WIDTH, 0);
 
-          drawChordEx(ctx, chords[0], ChordLocation.H_LEFT);
-          drawChordEx(ctx, chords[1], ChordLocation.H_RIGHT);
+          drawChord(ctx, chords[0], ChordLocation.H_LEFT);
+          drawChord(ctx, chords[1], ChordLocation.H_RIGHT);
         } else if (chordCount === 3) {
           // Draw 3 chords with a diagonal separator
           ctx.moveTo(0, CELL_HEIGHT);
@@ -494,18 +495,18 @@
           if (chordData.o?.r === true) {
             // Rotate ?
             ctx.moveTo(0, 0);
-            drawChordEx(ctx, chords[0], ChordLocation.Q_LEFT);
-            drawChordEx(ctx, chords[1], ChordLocation.Q_TOP);
-            drawChordEx(ctx, chords[2], ChordLocation.H_RIGHT);
+            drawChord(ctx, chords[0], ChordLocation.Q_LEFT);
+            drawChord(ctx, chords[1], ChordLocation.Q_TOP);
+            drawChord(ctx, chords[2], ChordLocation.H_RIGHT);
           } else {
             ctx.moveTo(CELL_WIDTH, CELL_HEIGHT);
-            drawChordEx(ctx, chords[0], ChordLocation.H_LEFT);
-            drawChordEx(
+            drawChord(ctx, chords[0], ChordLocation.H_LEFT);
+            drawChord(
               ctx,
               chords[CURRENT_MODEL.settings.cw ? 1 : 2],
               ChordLocation.Q_RIGHT
             );
-            drawChordEx(
+            drawChord(
               ctx,
               chords[CURRENT_MODEL.settings.cw ? 2 : 1],
               ChordLocation.Q_BOTTOM
@@ -519,14 +520,14 @@
           ctx.moveTo(0, CELL_HEIGHT);
           ctx.lineTo(CELL_WIDTH, 0);
 
-          drawChordEx(ctx, chords[0], ChordLocation.Q_LEFT);
-          drawChordEx(ctx, chords[1], ChordLocation.Q_TOP);
-          drawChordEx(
+          drawChord(ctx, chords[0], ChordLocation.Q_LEFT);
+          drawChord(ctx, chords[1], ChordLocation.Q_TOP);
+          drawChord(
             ctx,
             chords[CURRENT_MODEL.settings.cw ? 2 : 3],
             ChordLocation.Q_RIGHT
           );
-          drawChordEx(
+          drawChord(
             ctx,
             chords[CURRENT_MODEL.settings.cw ? 3 : 2],
             ChordLocation.Q_BOTTOM
@@ -535,7 +536,7 @@
         ctx.stroke();
       }
 
-      function drawChordEx(ctx, chord, position) {
+      function drawChord(ctx, chord, position) {
         const textMeasures = ctx.measureText(chord);
         const baseTextWidth =
           Math.abs(textMeasures.actualBoundingBoxLeft) +
@@ -561,7 +562,7 @@
           const scaledFontSize = Math.floor(
             CURRENT_MODEL.settings.font.size * ratio
           );
-          ctx.font = getFont(scaledFontSize);
+          ctx.font = getFont(scaledFontSize * 0.8);
           const scaledMetrics = ctx.measureText(chord);
           chordX = CELL_WIDTH / 2;
           chordY =
@@ -569,6 +570,37 @@
               scaledMetrics.actualBoundingBoxAscent -
               scaledMetrics.actualBoundingBoxDescent) /
             2;
+        } else if (
+          position === ChordLocation.H_LEFT ||
+          position === ChordLocation.H_RIGHT
+        ) {
+          const fullHeight = baseTextHeight + baseTextWidth / CELL_RATIO;
+          const scale = CELL_HEIGHT / fullHeight;
+          const scaledFontSize = Math.floor(
+            CURRENT_MODEL.settings.font.size * scale
+          );
+          ctx.font = getFont(scaledFontSize);
+          const scaledMetrics = ctx.measureText(chord);
+          const scaledWidth =
+            scaledMetrics.actualBoundingBoxLeft +
+            scaledMetrics.actualBoundingBoxRight;
+          const scaledHeight =
+            scaledMetrics.actualBoundingBoxAscent +
+            scaledMetrics.actualBoundingBoxDescent;
+
+          ctx.font = getFont(scaledFontSize * 0.9);
+          const fittingMetrics = ctx.measureText(chord);
+
+          if (position === ChordLocation.H_LEFT) {
+            chordX = scaledWidth - fittingMetrics.actualBoundingBoxRight;
+            chordY = scaledHeight - fittingMetrics.actualBoundingBoxDescent;
+          } else {
+            chordX = CELL_WIDTH - scaledWidth / 2;
+            chordY =
+              CELL_HEIGHT -
+              scaledHeight +
+              fittingMetrics.actualBoundingBoxAscent;
+          }
         } else if (
           position === ChordLocation.Q_TOP ||
           position === ChordLocation.Q_BOTTOM
@@ -583,40 +615,18 @@
           const scaledHeight =
             scaledMetrics.actualBoundingBoxAscent +
             scaledMetrics.actualBoundingBoxDescent;
-          ctx.strokeStyle = previousStyle;
+
+          ctx.font = getFont(scaledFontSize * 0.9);
+          const fittingMetrics = ctx.measureText(chord);
 
           chordX = CELL_WIDTH / 2;
           if (position === ChordLocation.Q_TOP) {
-            chordY = scaledMetrics.actualBoundingBoxAscent;
+            chordY = scaledHeight - fittingMetrics.actualBoundingBoxDescent;
           } else {
-            chordY = CELL_HEIGHT - scaledMetrics.actualBoundingBoxDescent;
-          }
-        } else if (
-          position === ChordLocation.H_LEFT ||
-          position === ChordLocation.H_RIGHT
-        ) {
-          const fullHeight = baseTextHeight + baseTextWidth / CELL_RATIO;
-          const scale = CELL_HEIGHT / fullHeight;
-          const scaledFontSize = Math.floor(
-            CURRENT_MODEL.settings.font.size * scale
-          );
-          ctx.font = getFont(scaledFontSize);
-          const scaledMetrics = ctx.measureText(chord);
-          ctx.strokeStyle = previousStyle;
-
-          if (position === ChordLocation.H_LEFT) {
-            chordX =
-              (scaledMetrics.actualBoundingBoxLeft +
-                scaledMetrics.actualBoundingBoxRight) /
-              2;
-            chordY = scaledMetrics.actualBoundingBoxAscent;
-          } else {
-            chordX =
-              CELL_WIDTH -
-              (scaledMetrics.actualBoundingBoxLeft +
-                scaledMetrics.actualBoundingBoxRight) /
-                2;
-            chordY = CELL_HEIGHT - scaledMetrics.actualBoundingBoxDescent;
+            chordY =
+              CELL_HEIGHT -
+              scaledHeight +
+              fittingMetrics.actualBoundingBoxAscent;
           }
         } else if (
           position === ChordLocation.Q_LEFT ||
@@ -629,29 +639,23 @@
           );
           ctx.font = getFont(scaledFontSize);
           const scaledMetrics = ctx.measureText(chord);
-          ctx.strokeStyle = previousStyle;
+          const scaledWidth =
+            scaledMetrics.actualBoundingBoxLeft +
+            scaledMetrics.actualBoundingBoxRight;
 
-          chordX =
-            (scaledMetrics.actualBoundingBoxLeft +
-              scaledMetrics.actualBoundingBoxRight) /
-            2;
+          ctx.font = getFont(scaledFontSize * 0.9);
+          const fittingMetrics = ctx.measureText(chord);
           chordY =
             CELL_HEIGHT / 2 +
-            (scaledMetrics.actualBoundingBoxAscent +
-              scaledMetrics.actualBoundingBoxDescent) /
-              2 +
-            scaledMetrics.actualBoundingBoxDescent;
+            (fittingMetrics.actualBoundingBoxDescent +
+              fittingMetrics.actualBoundingBoxAscent) /
+              2 -
+            fittingMetrics.actualBoundingBoxDescent;
           if (position === ChordLocation.Q_LEFT) {
-            chordX =
-              (scaledMetrics.actualBoundingBoxLeft +
-                scaledMetrics.actualBoundingBoxRight) /
-              2;
+            chordX = scaledWidth - fittingMetrics.actualBoundingBoxRight;
           } else {
             chordX =
-              CELL_WIDTH -
-              (scaledMetrics.actualBoundingBoxLeft +
-                scaledMetrics.actualBoundingBoxRight) /
-                2;
+              CELL_WIDTH - scaledWidth + fittingMetrics.actualBoundingBoxLeft;
           }
         }
         ctx.fillStyle = "#000";
