@@ -10,9 +10,10 @@
   "addOns": {
     "common": {
       "name": "Chords Grid Crafter",
-      "logoUrl": "https://the8tre.github.io/gdocs-chords-grid-crafter/assets/images/cgc-logo-white.png",
+      "logoUrl": "https://raw.githubusercontent.com/wiki/the8tre/gdocs-chords-grid-crafter/images/cgc-logo-white.png",
       "openLinkUrlPrefixes": [
-        "https://the8tre.github.io/gdocs-chords-grid-crafter/"
+        "https://raw.githubusercontent.com/wiki/the8tre/gdocs-chords-grid-crafter/",
+        "https://github.com/the8tre/gdocs-chords-grid-crafter/"
       ]
     }
   }

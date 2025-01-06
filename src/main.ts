@@ -5,6 +5,10 @@ function onOpen() {
     .addToUi();
 }
 
+function onInstall() {
+  onOpen();
+}
+
 function showChordGridPanel() {
   const html = HtmlService.createHtmlOutputFromFile("src/sidebar")
     .setTitle("Chords Grid Crafter")
@@ -91,13 +95,16 @@ function getLocalizedStrings(): any {
       labelOutputScale: "Output scale",
       labelFont: "Font",
       labelBold: "Bold",
-      labelChordsOrder: "Chords order",
+      labelChordsOrder: "Chords reading order",
       labelShowPanel: "Show panel",
       messageInserting: "Inserting/Replacing...",
       messageLoading: "Loading...",
       messageLoadingSelection: "Loading selection...",
       messageSelectionInvalid:
         "Please place the cursor where you want to insert the grid or select an existing CGC Chord Grid.",
+      labelDocumentation: "documentation",
+      documentationUrl:
+        "https://github.com/the8tre/gdocs-chords-grid-crafter/wiki",
     },
     fr: {
       buttonInsert: "Insérer / Remplacer",
@@ -107,16 +114,20 @@ function getLocalizedStrings(): any {
       labelOutputScale: "Echelle de sortie",
       labelFont: "Police",
       labelBold: "Gras",
-      labelChordsOrder: "Ordre des accords",
+      labelChordsOrder: "Ordre de lecture des accords",
       labelShowPanel: "Afficher le panneau",
       messageInserting: "Insertion/Remplacement...",
       messageLoading: "Chargement...",
       messageLoadingSelection: "Chargement de la sélection...",
       messageSelectionInvalid:
-        "Placez le cusrseur au point d'insertion de la grille ou sélectionnez une grile d'accord CGC existante.",
+        "Placez le cusrseur au point d'insertion de la grille ou sélectionnez une grille d'accords CGC existante.",
+      labelDocumentation: "documentation",
+      documentationUrl:
+        "https://github.com/the8tre/gdocs-chords-grid-crafter/wiki/Home-fr-FR",
     },
   };
 
   const locale = Session.getActiveUserLocale(); // E.g., "en", "fr"
+  // const locale = "en";
   return strings[locale] || strings["en"]; // Default to English if locale not found
 }

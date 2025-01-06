@@ -52,7 +52,6 @@
         display: flex;
         width: 100%;
         font-size: 18px !important;
-        /* font-family: "Roboto Mono" !important; */
         border: none !important;
       }
       .focused {
@@ -128,6 +127,9 @@
       .clockwise {
         display: inline-block;
         vertical-align: middle;
+      }
+      .footer {
+        margin-top: 50px;
       }
       /* Dropdown Container */
       .dropdown {
@@ -247,14 +249,14 @@
     <div id="title-settings" class="block-title">Settings</div>
     <div class="settings-block">
       <div id="label-output-scale" class="setting-name">Output scale</div>
-      <input type="number" id="scale" min="10" max="100" value="50" />%
+      <input type="number" id="field-scale" min="10" max="100" value="50" />%
       <div id="label-font" class="setting-name">Font</div>
       <div class="block form-group font-settings">
         <select id="select-font" onchange="changeFont()">
-          <option value="Roboto Mono" selected>Roboto Mono</option>
+          <option value="Arial" selected>Arial</option>
           <option value="Courier New">Courier New</option>
+          <option value="Roboto Mono">Roboto Mono</option>
           <option value="Times New Roman">Times New Roman</option>
-          <option value="Comic Sans MS">Comic Sans MS</option>
         </select>
         <input
           type="checkbox"
@@ -304,11 +306,12 @@
         </div>
       </div>
     </div>
-    <div class="sidebar bottom">
+    <div class="footer">
       <span class="gray">Chords Grid Crafter v1.0.0</span>
       <a
+        id="doc-link"
         target="_blank"
-        href="https://the8tre.github.io/gdocs-chords-grid-crafter/"
+        href="https://github.com/the8tre/gdocs-chords-grid-crafter/wiki"
         >documentation</a
       >
     </div>
@@ -320,20 +323,30 @@
       let LOCALIZED_STRINGS;
       const CELL_WIDTH = 150;
       const CELL_HEIGHT = 100;
+      const CELL_RATIO = CELL_WIDTH / CELL_HEIGHT;
+      const ChordLocation = {
+        CENTER: "CENTER",
+        H_LEFT: "H_LEFT",
+        H_RIGHT: "H_RIGHT",
+        Q_TOP: "Q_TOP",
+        Q_BOTTOM: "Q_BOTTOM",
+        Q_LEFT: "Q_LEFT",
+        Q_RIGHT: "Q_RIGHT",
+      };
       let LAST_FOCUSED;
       let CURRENT_MODEL = {};
       let DEFAULT_MODEL = {
         settings: {
-          clockwise: true, // Clockwise
+          cw: true, // Clockwise
           scale: 50, // Output scale
           font: {
-            size: 42,
-            face: "Roboto Mono",
+            size: 100,
+            face: "Arial",
             bold: true,
           },
         },
         g: {
-          0: { c: ["Am"] },
+          0: { c: ["A", "B", "C", "D"] },
         },
       };
 
@@ -361,6 +374,10 @@
           LOCALIZED_STRINGS.labelFont;
         document.getElementById("label-chords-order").innerText =
           LOCALIZED_STRINGS.labelChordsOrder;
+        document.getElementById("doc-link").innerText =
+          LOCALIZED_STRINGS.labelDocumentation;
+        document.getElementById("doc-link").href =
+          LOCALIZED_STRINGS.documentationUrl;
         setBusy(false);
       }
 
@@ -450,7 +467,7 @@
         ctx.font = getFont();
         ctx.fillStyle = "#000";
         ctx.textAlign = "center";
-        ctx.textBaseline = "middle";
+        ctx.textBaseline = "alphabetic";
 
         // Clear the canvas
         ctx.clearRect(0, 0, CELL_WIDTH, CELL_HEIGHT);
@@ -462,32 +479,14 @@
 
         if (chordCount === 1) {
           // Draw a single centered chord
-          drawChord(
-            ctx,
-            chords[0],
-            CELL_WIDTH,
-            CELL_WIDTH / 2,
-            CELL_HEIGHT / 2
-          );
+          drawChordEx(ctx, chords[0], ChordLocation.CENTER);
         } else if (chordCount === 2) {
           // Draw 2 chords with a diagonal separator
           ctx.moveTo(0, CELL_HEIGHT);
           ctx.lineTo(CELL_WIDTH, 0);
 
-          drawChord(
-            ctx,
-            chords[0],
-            CELL_WIDTH / 2,
-            CELL_WIDTH / 4,
-            CELL_HEIGHT / 3
-          );
-          drawChord(
-            ctx,
-            chords[1],
-            CELL_WIDTH / 2,
-            (3 * CELL_WIDTH) / 4,
-            (2 * CELL_HEIGHT) / 3
-          );
+          drawChordEx(ctx, chords[0], ChordLocation.H_LEFT);
+          drawChordEx(ctx, chords[1], ChordLocation.H_RIGHT);
         } else if (chordCount === 3) {
           // Draw 3 chords with a diagonal separator
           ctx.moveTo(0, CELL_HEIGHT);
@@ -495,49 +494,21 @@
           if (chordData.o?.r === true) {
             // Rotate ?
             ctx.moveTo(0, 0);
-            drawChord(
-              ctx,
-              chords[0],
-              CELL_WIDTH / 2,
-              CELL_WIDTH / 6,
-              CELL_HEIGHT / 2
-            );
-            drawChord(
-              ctx,
-              chords[1],
-              CELL_WIDTH / 2,
-              CELL_WIDTH / 2,
-              CELL_HEIGHT / 4
-            );
-            drawChord(
-              ctx,
-              chords[2],
-              CELL_WIDTH / 2,
-              (3 * CELL_WIDTH) / 4,
-              (2 * CELL_HEIGHT) / 3
-            );
+            drawChordEx(ctx, chords[0], ChordLocation.Q_LEFT);
+            drawChordEx(ctx, chords[1], ChordLocation.Q_TOP);
+            drawChordEx(ctx, chords[2], ChordLocation.H_RIGHT);
           } else {
             ctx.moveTo(CELL_WIDTH, CELL_HEIGHT);
-            drawChord(
-              ctx,
-              chords[0],
-              CELL_WIDTH / 2,
-              CELL_WIDTH / 4,
-              CELL_HEIGHT / 3
-            );
-            drawChord(
+            drawChordEx(ctx, chords[0], ChordLocation.H_LEFT);
+            drawChordEx(
               ctx,
               chords[CURRENT_MODEL.settings.cw ? 1 : 2],
-              CELL_WIDTH / 2,
-              (5 * CELL_WIDTH) / 6,
-              CELL_HEIGHT / 2
+              ChordLocation.Q_RIGHT
             );
-            drawChord(
+            drawChordEx(
               ctx,
               chords[CURRENT_MODEL.settings.cw ? 2 : 1],
-              CELL_WIDTH / 2,
-              CELL_WIDTH / 2,
-              (4 * CELL_HEIGHT) / 5
+              ChordLocation.Q_BOTTOM
             );
           }
           ctx.lineTo(CELL_WIDTH / 2, CELL_HEIGHT / 2);
@@ -548,56 +519,146 @@
           ctx.moveTo(0, CELL_HEIGHT);
           ctx.lineTo(CELL_WIDTH, 0);
 
-          drawChord(
-            ctx,
-            chords[0],
-            (CELL_WIDTH / 2) * 0.9,
-            CELL_WIDTH / 6,
-            CELL_HEIGHT / 2
-          );
-          drawChord(
-            ctx,
-            chords[1],
-            (CELL_WIDTH / 2) * 0.9,
-            CELL_WIDTH / 2,
-            CELL_HEIGHT / 4
-          );
-          drawChord(
+          drawChordEx(ctx, chords[0], ChordLocation.Q_LEFT);
+          drawChordEx(ctx, chords[1], ChordLocation.Q_TOP);
+          drawChordEx(
             ctx,
             chords[CURRENT_MODEL.settings.cw ? 2 : 3],
-            (CELL_WIDTH / 2) * 0.9,
-            (5 * CELL_WIDTH) / 6,
-            CELL_HEIGHT / 2
+            ChordLocation.Q_RIGHT
           );
-          drawChord(
+          drawChordEx(
             ctx,
             chords[CURRENT_MODEL.settings.cw ? 3 : 2],
-            (CELL_WIDTH / 2) * 0.9,
-            CELL_WIDTH / 2,
-            (4 * CELL_HEIGHT) / 5
+            ChordLocation.Q_BOTTOM
           );
         }
         ctx.stroke();
       }
 
-      function drawChord(ctx, chord, maxWidth, x, y) {
-        const textWidth = ctx.measureText(chord).width;
-        let currentFont = null;
-        if (textWidth > maxWidth) {
-          currentFont = ctx.font;
-          const scale = maxWidth / textWidth;
+      function drawChordEx(ctx, chord, position) {
+        const textMeasures = ctx.measureText(chord);
+        const baseTextWidth =
+          Math.abs(textMeasures.actualBoundingBoxLeft) +
+          Math.abs(textMeasures.actualBoundingBoxRight);
+        const baseTextHeight =
+          Math.abs(textMeasures.actualBoundingBoxDescent) +
+          Math.abs(textMeasures.actualBoundingBoxAscent);
+
+        const previousStyle = ctx.strokeStyle;
+        let currentFont = ctx.font;
+        let chordX, chordY;
+
+        if (position === ChordLocation.CENTER) {
+          let constRatioX = CELL_WIDTH / baseTextWidth;
+          let constRatioY = CELL_HEIGHT / baseTextHeight;
+
+          let ratio;
+          if (baseTextHeight * constRatioX > CELL_HEIGHT) {
+            ratio = constRatioY;
+          } else {
+            ratio = constRatioX;
+          }
+          const scaledFontSize = Math.floor(
+            CURRENT_MODEL.settings.font.size * ratio
+          );
+          ctx.font = getFont(scaledFontSize);
+          const scaledMetrics = ctx.measureText(chord);
+          chordX = CELL_WIDTH / 2;
+          chordY =
+            (CELL_HEIGHT +
+              scaledMetrics.actualBoundingBoxAscent -
+              scaledMetrics.actualBoundingBoxDescent) /
+            2;
+        } else if (
+          position === ChordLocation.Q_TOP ||
+          position === ChordLocation.Q_BOTTOM
+        ) {
+          const fullHeight = baseTextHeight + baseTextWidth / 2 / CELL_RATIO;
+          const scale = CELL_HEIGHT / 2 / fullHeight;
           const scaledFontSize = Math.floor(
             CURRENT_MODEL.settings.font.size * scale
           );
           ctx.font = getFont(scaledFontSize);
+          const scaledMetrics = ctx.measureText(chord);
+          const scaledHeight =
+            scaledMetrics.actualBoundingBoxAscent +
+            scaledMetrics.actualBoundingBoxDescent;
+          ctx.strokeStyle = previousStyle;
+
+          chordX = CELL_WIDTH / 2;
+          if (position === ChordLocation.Q_TOP) {
+            chordY = scaledMetrics.actualBoundingBoxAscent;
+          } else {
+            chordY = CELL_HEIGHT - scaledMetrics.actualBoundingBoxDescent;
+          }
+        } else if (
+          position === ChordLocation.H_LEFT ||
+          position === ChordLocation.H_RIGHT
+        ) {
+          const fullHeight = baseTextHeight + baseTextWidth / CELL_RATIO;
+          const scale = CELL_HEIGHT / fullHeight;
+          const scaledFontSize = Math.floor(
+            CURRENT_MODEL.settings.font.size * scale
+          );
+          ctx.font = getFont(scaledFontSize);
+          const scaledMetrics = ctx.measureText(chord);
+          ctx.strokeStyle = previousStyle;
+
+          if (position === ChordLocation.H_LEFT) {
+            chordX =
+              (scaledMetrics.actualBoundingBoxLeft +
+                scaledMetrics.actualBoundingBoxRight) /
+              2;
+            chordY = scaledMetrics.actualBoundingBoxAscent;
+          } else {
+            chordX =
+              CELL_WIDTH -
+              (scaledMetrics.actualBoundingBoxLeft +
+                scaledMetrics.actualBoundingBoxRight) /
+                2;
+            chordY = CELL_HEIGHT - scaledMetrics.actualBoundingBoxDescent;
+          }
+        } else if (
+          position === ChordLocation.Q_LEFT ||
+          position === ChordLocation.Q_RIGHT
+        ) {
+          const fullWidth = baseTextWidth + (baseTextHeight / 2) * CELL_RATIO;
+          const scale = CELL_WIDTH / 2 / fullWidth;
+          const scaledFontSize = Math.floor(
+            CURRENT_MODEL.settings.font.size * scale
+          );
+          ctx.font = getFont(scaledFontSize);
+          const scaledMetrics = ctx.measureText(chord);
+          ctx.strokeStyle = previousStyle;
+
+          chordX =
+            (scaledMetrics.actualBoundingBoxLeft +
+              scaledMetrics.actualBoundingBoxRight) /
+            2;
+          chordY =
+            CELL_HEIGHT / 2 +
+            (scaledMetrics.actualBoundingBoxAscent +
+              scaledMetrics.actualBoundingBoxDescent) /
+              2 +
+            scaledMetrics.actualBoundingBoxDescent;
+          if (position === ChordLocation.Q_LEFT) {
+            chordX =
+              (scaledMetrics.actualBoundingBoxLeft +
+                scaledMetrics.actualBoundingBoxRight) /
+              2;
+          } else {
+            chordX =
+              CELL_WIDTH -
+              (scaledMetrics.actualBoundingBoxLeft +
+                scaledMetrics.actualBoundingBoxRight) /
+                2;
+          }
         }
         ctx.fillStyle = "#000";
         ctx.textAlign = "center";
-        ctx.textBaseline = "middle";
-        ctx.fillText(chord, x, y);
-        if (currentFont != null) {
-          ctx.font = currentFont;
-        }
+        ctx.textBaseline = "alphabetic";
+        ctx.fillText(chord, chordX, chordY);
+        ctx.font = currentFont;
       }
 
       function insertGrid() {
@@ -611,7 +672,7 @@
           ctx.translate(CELL_WIDTH, 0);
         }
         const imageData = canvas.toDataURL("image/png");
-        const scale = document.getElementById("scale").value;
+        const scale = document.getElementById("field-scale").value;
         CURRENT_MODEL.settings.scale = scale;
 
         setBusy(true, LOCALIZED_STRINGS.messageInserting);
@@ -752,6 +813,13 @@
           for (let i = 0; i < elementCount; i++) {
             addRow(cgcModel.g[i]);
           }
+          // Apply scale setting
+          const scaleField = document.getElementById("field-scale");
+          scaleField.value = CURRENT_MODEL.settings.scale;
+
+          // Apply clockwise setting
+          clockwise(CURRENT_MODEL.settings.cw);
+
           // Apply clockwise setting
           clockwise(CURRENT_MODEL.settings.cw);
 
