@@ -215,9 +215,9 @@
       ><span id="busy-message">Loading...</span>
     </div>
     <canvas
-      id="gridCellCanvas"
+      id="canvas-preview"
       class="preview"
-      width="150"
+      width="100"
       height="100"
     ></canvas>
     <div class="row-buttons">
@@ -248,8 +248,13 @@
     </div>
     <div id="title-settings" class="block-title">Settings</div>
     <div class="settings-block">
-      <div id="label-output-scale" class="setting-name">Output scale</div>
-      <input type="number" id="field-scale" min="10" max="100" value="50" />%
+      <div id="label-shape" class="setting-name">Shape</div>
+      <select id="select-shape" onchange="changeShape()">
+        <option id="option-square" value="square">Square</option>
+        <option id="option-rectangle" value="rectangle" selected>
+          Rectangle
+        </option>
+      </select>
       <div id="label-font" class="setting-name">Font</div>
       <div class="block form-group font-settings">
         <select id="select-font" onchange="changeFont()">
@@ -305,6 +310,8 @@
           </div>
         </div>
       </div>
+      <div id="label-output-scale" class="setting-name">Output scale</div>
+      <input type="number" id="field-scale" min="10" max="100" value="50" />%
     </div>
     <div class="footer">
       <span class="gray">Chords Grid Crafter v1.0.0</span>
@@ -321,9 +328,9 @@
        * Chords Grid Crafter Script section
        */
       let LOCALIZED_STRINGS;
-      const CELL_WIDTH = 150;
-      const CELL_HEIGHT = 100;
-      const CELL_RATIO = CELL_WIDTH / CELL_HEIGHT;
+      let CELL_WIDTH = 150;
+      let CELL_HEIGHT = 100;
+      let CELL_RATIO = CELL_WIDTH / CELL_HEIGHT;
       const ChordLocation = {
         CENTER: "CENTER",
         H_LEFT: "H_LEFT",
@@ -339,8 +346,9 @@
         settings: {
           cw: true, // Clockwise
           scale: 50, // Output scale
+          square: false, // Square shape
           font: {
-            size: 100,
+            size: 45,
             face: "Arial",
             bold: true,
           },
@@ -379,6 +387,12 @@
           LOCALIZED_STRINGS.labelDocumentation;
         document.getElementById("doc-link").href =
           LOCALIZED_STRINGS.documentationUrl;
+        document.getElementById("label-shape").href =
+          LOCALIZED_STRINGS.labelShape;
+        document.getElementById("option-square").href =
+          LOCALIZED_STRINGS.labelSquare;
+        document.getElementById("option-rectangle").href =
+          LOCALIZED_STRINGS.labelRectangle;
         setBusy(false);
       }
 
@@ -456,7 +470,7 @@
 
         CURRENT_MODEL.g[chordIndex].c = chords;
 
-        const canvas = document.getElementById("gridCellCanvas");
+        const canvas = document.getElementById("canvas-preview");
         const ctx = canvas.getContext("2d");
 
         drawChords(ctx, CURRENT_MODEL.g[chordIndex]);
@@ -537,125 +551,171 @@
       }
 
       function drawChord(ctx, chord, position) {
-        const textMeasures = ctx.measureText(chord);
-        const baseTextWidth =
-          Math.abs(textMeasures.actualBoundingBoxLeft) +
-          Math.abs(textMeasures.actualBoundingBoxRight);
-        const baseTextHeight =
-          Math.abs(textMeasures.actualBoundingBoxDescent) +
-          Math.abs(textMeasures.actualBoundingBoxAscent);
+        const baseMetrics = ctx.measureText(chord);
+        const baseWidth =
+          Math.abs(baseMetrics.actualBoundingBoxLeft) +
+          Math.abs(baseMetrics.actualBoundingBoxRight);
+        const baseHeight =
+          Math.abs(baseMetrics.actualBoundingBoxDescent) +
+          Math.abs(baseMetrics.actualBoundingBoxAscent);
 
         const previousStyle = ctx.strokeStyle;
         let currentFont = ctx.font;
         let chordX, chordY;
 
         if (position === ChordLocation.CENTER) {
-          let constRatioX = CELL_WIDTH / baseTextWidth;
-          let constRatioY = CELL_HEIGHT / baseTextHeight;
-
-          let ratio;
-          if (baseTextHeight * constRatioX > CELL_HEIGHT) {
-            ratio = constRatioY;
+          if (baseHeight < CELL_HEIGHT * 0.8 && baseWidth < CELL_WIDTH * 0.8) {
+            chordX = CELL_WIDTH / 2;
+            chordY =
+              CELL_HEIGHT / 2 +
+              baseHeight / 2 -
+              baseMetrics.actualBoundingBoxDescent;
           } else {
-            ratio = constRatioX;
+            let constRatioX = CELL_WIDTH / baseWidth;
+            let constRatioY = CELL_HEIGHT / baseHeight;
+
+            let ratio;
+            if (baseHeight * constRatioX > CELL_HEIGHT) {
+              ratio = constRatioY;
+            } else {
+              ratio = constRatioX;
+            }
+            const scaledFontSize = Math.floor(
+              CURRENT_MODEL.settings.font.size * ratio
+            );
+            ctx.font = getFont(scaledFontSize * 0.8);
+            const scaledMetrics = ctx.measureText(chord);
+            chordX = CELL_WIDTH / 2;
+            chordY =
+              (CELL_HEIGHT +
+                scaledMetrics.actualBoundingBoxAscent -
+                scaledMetrics.actualBoundingBoxDescent) /
+              2;
           }
-          const scaledFontSize = Math.floor(
-            CURRENT_MODEL.settings.font.size * ratio
-          );
-          ctx.font = getFont(scaledFontSize * 0.8);
-          const scaledMetrics = ctx.measureText(chord);
-          chordX = CELL_WIDTH / 2;
-          chordY =
-            (CELL_HEIGHT +
-              scaledMetrics.actualBoundingBoxAscent -
-              scaledMetrics.actualBoundingBoxDescent) /
-            2;
         } else if (
           position === ChordLocation.H_LEFT ||
           position === ChordLocation.H_RIGHT
         ) {
-          const fullHeight = baseTextHeight + baseTextWidth / CELL_RATIO;
-          const scale = CELL_HEIGHT / fullHeight;
-          const scaledFontSize = Math.floor(
-            CURRENT_MODEL.settings.font.size * scale
-          );
-          ctx.font = getFont(scaledFontSize);
-          const scaledMetrics = ctx.measureText(chord);
-          const scaledWidth =
-            scaledMetrics.actualBoundingBoxLeft +
-            scaledMetrics.actualBoundingBoxRight;
-          const scaledHeight =
-            scaledMetrics.actualBoundingBoxAscent +
-            scaledMetrics.actualBoundingBoxDescent;
-
-          ctx.font = getFont(scaledFontSize * 0.9);
-          const fittingMetrics = ctx.measureText(chord);
-
-          if (position === ChordLocation.H_LEFT) {
-            chordX = scaledWidth - fittingMetrics.actualBoundingBoxRight;
-            chordY = scaledHeight - fittingMetrics.actualBoundingBoxDescent;
+          const pseudoFullHeight = baseHeight + baseWidth / CELL_RATIO;
+          if (pseudoFullHeight < CELL_WIDTH / 2) {
+            if (position === ChordLocation.H_LEFT) {
+              chordX = CELL_WIDTH / 4;
+              chordY =
+                CELL_HEIGHT / 3 +
+                baseHeight / 2 -
+                baseMetrics.actualBoundingBoxDescent;
+            } else {
+              chordX = (CELL_WIDTH / 4) * 3;
+              chordY =
+                (CELL_HEIGHT / 3) * 2 +
+                baseHeight / 2 -
+                baseMetrics.actualBoundingBoxDescent;
+            }
           } else {
-            chordX = CELL_WIDTH - scaledWidth / 2;
-            chordY =
-              CELL_HEIGHT -
-              scaledHeight +
-              fittingMetrics.actualBoundingBoxAscent;
+            const scale = CELL_HEIGHT / pseudoFullHeight;
+            const scaledFontSize = Math.floor(
+              CURRENT_MODEL.settings.font.size * scale
+            );
+            ctx.font = getFont(scaledFontSize);
+            const scaledMetrics = ctx.measureText(chord);
+            const scaledWidth =
+              scaledMetrics.actualBoundingBoxLeft +
+              scaledMetrics.actualBoundingBoxRight;
+            const scaledHeight =
+              scaledMetrics.actualBoundingBoxAscent +
+              scaledMetrics.actualBoundingBoxDescent;
+
+            ctx.font = getFont(scaledFontSize * 0.9);
+            const fittingMetrics = ctx.measureText(chord);
+
+            if (position === ChordLocation.H_LEFT) {
+              chordX = scaledWidth - fittingMetrics.actualBoundingBoxRight;
+              chordY = scaledHeight - fittingMetrics.actualBoundingBoxDescent;
+            } else {
+              chordX = CELL_WIDTH - scaledWidth / 2;
+              chordY =
+                CELL_HEIGHT -
+                scaledHeight +
+                fittingMetrics.actualBoundingBoxAscent;
+            }
           }
         } else if (
           position === ChordLocation.Q_TOP ||
           position === ChordLocation.Q_BOTTOM
         ) {
-          const fullHeight = baseTextHeight + baseTextWidth / 2 / CELL_RATIO;
-          const scale = CELL_HEIGHT / 2 / fullHeight;
-          const scaledFontSize = Math.floor(
-            CURRENT_MODEL.settings.font.size * scale
-          );
-          ctx.font = getFont(scaledFontSize);
-          const scaledMetrics = ctx.measureText(chord);
-          const scaledHeight =
-            scaledMetrics.actualBoundingBoxAscent +
-            scaledMetrics.actualBoundingBoxDescent;
-
-          ctx.font = getFont(scaledFontSize * 0.9);
-          const fittingMetrics = ctx.measureText(chord);
-
-          chordX = CELL_WIDTH / 2;
-          if (position === ChordLocation.Q_TOP) {
-            chordY = scaledHeight - fittingMetrics.actualBoundingBoxDescent;
-          } else {
+          const fullHeight = baseHeight + baseWidth / 2 / CELL_RATIO;
+          if (fullHeight < CELL_HEIGHT / 2) {
+            chordX = CELL_WIDTH / 2;
             chordY =
-              CELL_HEIGHT -
-              scaledHeight +
-              fittingMetrics.actualBoundingBoxAscent;
+              CELL_HEIGHT / 5 +
+              baseHeight / 2 -
+              baseMetrics.actualBoundingBoxDescent;
+            if (position === ChordLocation.Q_BOTTOM) {
+              chordY += (CELL_HEIGHT / 5) * 3;
+            }
+          } else {
+            const scale = CELL_HEIGHT / 2 / fullHeight;
+            const scaledFontSize = Math.floor(
+              CURRENT_MODEL.settings.font.size * scale
+            );
+            ctx.font = getFont(scaledFontSize);
+            const scaledMetrics = ctx.measureText(chord);
+            const scaledHeight =
+              scaledMetrics.actualBoundingBoxAscent +
+              scaledMetrics.actualBoundingBoxDescent;
+
+            ctx.font = getFont(scaledFontSize * 0.9);
+            const fittingMetrics = ctx.measureText(chord);
+
+            chordX = CELL_WIDTH / 2;
+            if (position === ChordLocation.Q_TOP) {
+              chordY = scaledHeight - fittingMetrics.actualBoundingBoxDescent;
+            } else {
+              chordY =
+                CELL_HEIGHT -
+                scaledHeight +
+                fittingMetrics.actualBoundingBoxAscent;
+            }
           }
         } else if (
           position === ChordLocation.Q_LEFT ||
           position === ChordLocation.Q_RIGHT
         ) {
-          const fullWidth = baseTextWidth + (baseTextHeight / 2) * CELL_RATIO;
-          const scale = CELL_WIDTH / 2 / fullWidth;
-          const scaledFontSize = Math.floor(
-            CURRENT_MODEL.settings.font.size * scale
-          );
-          ctx.font = getFont(scaledFontSize);
-          const scaledMetrics = ctx.measureText(chord);
-          const scaledWidth =
-            scaledMetrics.actualBoundingBoxLeft +
-            scaledMetrics.actualBoundingBoxRight;
-
-          ctx.font = getFont(scaledFontSize * 0.9);
-          const fittingMetrics = ctx.measureText(chord);
-          chordY =
-            CELL_HEIGHT / 2 +
-            (fittingMetrics.actualBoundingBoxDescent +
-              fittingMetrics.actualBoundingBoxAscent) /
-              2 -
-            fittingMetrics.actualBoundingBoxDescent;
-          if (position === ChordLocation.Q_LEFT) {
-            chordX = scaledWidth - fittingMetrics.actualBoundingBoxRight;
+          const fullWidth = baseWidth + (baseHeight / 2) * CELL_RATIO;
+          if (fullWidth < CELL_WIDTH / 2) {
+            chordY =
+              CELL_HEIGHT / 2 +
+              baseHeight / 2 -
+              baseMetrics.actualBoundingBoxDescent;
+            chordX = CELL_WIDTH / 6;
+            if (position === ChordLocation.Q_RIGHT) {
+              chordX += (CELL_WIDTH / 6) * 4;
+            }
           } else {
-            chordX =
-              CELL_WIDTH - scaledWidth + fittingMetrics.actualBoundingBoxLeft;
+            const scale = CELL_WIDTH / 2 / fullWidth;
+            const scaledFontSize = Math.floor(
+              CURRENT_MODEL.settings.font.size * scale
+            );
+            ctx.font = getFont(scaledFontSize);
+            const scaledMetrics = ctx.measureText(chord);
+            const scaledWidth =
+              scaledMetrics.actualBoundingBoxLeft +
+              scaledMetrics.actualBoundingBoxRight;
+
+            ctx.font = getFont(scaledFontSize * 0.9);
+            const fittingMetrics = ctx.measureText(chord);
+            chordY =
+              CELL_HEIGHT / 2 +
+              (fittingMetrics.actualBoundingBoxDescent +
+                fittingMetrics.actualBoundingBoxAscent) /
+                2 -
+              fittingMetrics.actualBoundingBoxDescent;
+            if (position === ChordLocation.Q_LEFT) {
+              chordX = scaledWidth - fittingMetrics.actualBoundingBoxRight;
+            } else {
+              chordX =
+                CELL_WIDTH - scaledWidth + fittingMetrics.actualBoundingBoxLeft;
+            }
           }
         }
         ctx.fillStyle = "#000";
@@ -804,6 +864,29 @@
           .loadFromSelection();
       }
 
+      function changeShape(event) {
+        const shapeSelect = document.getElementById("select-shape");
+        const shape = shapeSelect.options[shapeSelect.selectedIndex].value;
+        applyShape(shape === "square");
+        // LAST_FOCUSED.blur();
+        focusElement(LAST_FOCUSED);
+      }
+
+      function applyShape(square) {
+        if (square) {
+          CELL_WIDTH = 100;
+          CELL_HEIGHT = 100;
+        } else {
+          CELL_WIDTH = 150;
+          CELL_HEIGHT = 100;
+        }
+        CELL_RATIO = CELL_WIDTH / CELL_HEIGHT;
+        const previewCanvas = document.getElementById("canvas-preview");
+        previewCanvas.setAttribute("width", CELL_WIDTH);
+        previewCanvas.setAttribute("height", CELL_HEIGHT);
+        CURRENT_MODEL.settings.square = square;
+      }
+
       function selectionLoaded(cgcModel) {
         setBusy(false);
         if (cgcModel) {
@@ -817,15 +900,15 @@
           for (let i = 0; i < elementCount; i++) {
             addRow(cgcModel.g[i]);
           }
-          // Apply scale setting
-          const scaleField = document.getElementById("field-scale");
-          scaleField.value = CURRENT_MODEL.settings.scale;
-
-          // Apply clockwise setting
-          clockwise(CURRENT_MODEL.settings.cw);
-
-          // Apply clockwise setting
-          clockwise(CURRENT_MODEL.settings.cw);
+          // Apply shape setting
+          const shapeDropdown = document.getElementById("select-shape");
+          const toSelect = CURRENT_MODEL.settings.square
+            ? "square"
+            : "rectangle";
+          Array.from(shapeDropdown.options).forEach((option) => {
+            option.selected = option.value === toSelect;
+          });
+          applyShape(CURRENT_MODEL.settings.square);
 
           // Apply font setting
           const fontDropdown = document.getElementById("select-font");
@@ -837,7 +920,15 @@
           const checkbox = document.getElementById("checkbox-bold");
           checkbox.checked = CURRENT_MODEL.settings.font.bold;
 
+          // Apply clockwise setting
+          clockwise(CURRENT_MODEL.settings.cw);
+
+          // Apply scale setting
+          const scaleField = document.getElementById("field-scale");
+          scaleField.value = CURRENT_MODEL.settings.scale;
+
           const firstInput = document.getElementById("chord-input-0");
+          firstInput.blur();
           focusElement(firstInput);
         } else {
           console.log("Nothing to load");
