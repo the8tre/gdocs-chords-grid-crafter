@@ -260,7 +260,7 @@
       </select>
       <div id="label-font" class="setting-name">Font</div>
       <div class="block form-group font-settings">
-        <select id="select-font" onchange="changeFont()">
+        <select id="select-font" onchange="changeFont(event)">
           <option value="Arial" selected>Arial</option>
           <option value="Courier New">Courier New</option>
           <option value="Roboto Mono">Roboto Mono</option>
@@ -317,7 +317,7 @@
       <input type="number" id="field-scale" min="10" max="100" value="50" />%
     </div>
     <div class="footer">
-      <span class="gray">Chords Grid Crafter v1.0.0</span>
+      <span class="gray">Chords Grid Crafter v1.1.0</span>
       <a
         id="doc-link"
         target="_blank"
@@ -358,7 +358,6 @@
           },
         },
         g: {
-          // 0: { c: ["A", "B", "C", "D"] },
           0: { c: "Am Bb" },
         },
       };
@@ -400,11 +399,14 @@
         setBusy(false);
       }
 
-      function changeFont(event) {
+      async function changeFont(event) {
         const fontSelect = document.getElementById("select-font");
         const font = fontSelect.options[fontSelect.selectedIndex].value;
         CURRENT_MODEL.settings.font.face = font;
-        focusElement(LAST_FOCUSED);
+        await document.fonts.load(getFont());
+        if (event) {
+          focusElement(LAST_FOCUSED);
+        }
       }
 
       function changeBold(event) {
@@ -898,8 +900,7 @@
         CURRENT_MODEL.settings.square = square;
       }
 
-      function selectionLoaded(cgcModel) {
-        setBusy(false);
+      async function selectionLoaded(cgcModel) {
         if (cgcModel) {
           removeAll(true);
           CURRENT_MODEL = {
@@ -926,6 +927,7 @@
           Array.from(fontDropdown.options).forEach((option) => {
             option.selected = option.value === CURRENT_MODEL.settings.font.face;
           });
+          await changeFont();
 
           // Apply bold setting
           const checkbox = document.getElementById("checkbox-bold");
@@ -944,11 +946,9 @@
         } else {
           console.log("Nothing to load");
         }
+        setBusy(false);
       }
-
-      document.fonts.ready.then(() => {
-        selectionLoaded(DEFAULT_MODEL);
-      });
+      selectionLoaded(DEFAULT_MODEL);
     </script>
   </body>
 </html>
