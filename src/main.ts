@@ -127,10 +127,10 @@ function getLocalizedStrings(): any {
       labelDocumentation: "documentation",
       documentationUrl:
         "https://github.com/the8tre/gdocs-chords-grid-crafter/wiki/Home-fr-FR",
+      labelShape: "Forme",
+      labelRectangle: "Rectangle",
+      labelSquare: "Carré",
     },
-    labelShape: "Forme",
-    labelRectangle: "Rectangle",
-    labelSquare: "Carré",
   };
 
   const locale = Session.getActiveUserLocale(); // E.g., "en", "fr"
