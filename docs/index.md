@@ -1,5 +1,3 @@
-# ![logo](assets/images/application-card-banner.png)<br/>Chords Grid Crafter ‐ Google Docs Add‐on
-
 ## Motivation and description
 The Chords Grid notation is a very useful tool when you want to make sure all members of your band are aligned on what they should play. You can learn more [here](https://en.wikipedia.org/wiki/Chord_chart#Grid_notation) and [here](https://www.imusic-school.com/blog/fr-guitare/debuter-guitare/grille-accords/)
 
