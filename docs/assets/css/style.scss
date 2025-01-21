@@ -6,9 +6,23 @@
 .navigation {
     margin: 10px;
     color: #fff;
-    font-size: 22px;
+    font-size: 18px;
     font-weight: 700;
     white-space: nowrap;
+}
+
+.lang-logo {
+    border: none;
+    box-shadow: none;
+    -webkit-box-shadow: none;
+    vertical-align: middle;
+    height: 32px;
+}
+
+#logo {
+    border: none;
+    box-shadow: none;
+    -webkit-box-shadow: none;
 }
 
 #google_translate_element {

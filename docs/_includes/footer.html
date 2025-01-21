@@ -1,0 +1,19 @@
+<div id="footer_wrap" class="outer">
+  <footer class="inner">
+    {% if site.github.is_project_page %}
+    <p class="copyright">
+      {{ site.title | default: site.github.repository_name }} maintained by
+      <a href="{{ site.github.owner_url }}">Ludovic Engrand</a>
+    </p>
+    {% endif %}
+    <p>
+      <a {% static_href %}href="/terms_of_service.html" {% endstatic_href %}
+        >Terms of service</a
+      >
+      |
+      <a {% static_href %}href="/privacy_policy" {% endstatic_href %}
+        >Privacy policy</a
+      >
+    </p>
+  </footer>
+</div>

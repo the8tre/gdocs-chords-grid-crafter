@@ -24,17 +24,17 @@
       <img id="logo" src="/assets/images/application-card-banner.png">
     </div>
     <div id="header-container">
-      <h1 id="project_title">{{ site.title | default: site.github.repository_name }}</h1>
-      <h2 id="project_tagline">{{ site.description | default: site.github.project_tagline }}</h2>
+      <h1 id="project_title">{{ site.data.l10n.title | default: site.github.repository_name }}</h1>
+      <h2 id="project_tagline">{{ site.data.l10n.description | default: site.github.project_tagline }}</h2>
     </div>
     <br>
     <div class="navigation-stripe">
-      <a href="/index.html" class="navigation">Documentation</a>
+      <a href="{{ site.baseurl }}/index.html" class="navigation">{{ site.data.l10n.documentation }}</a>
       <span class="navigation">|</span>
-      <a href="https://github.com/the8tre/gdocs-chords-grid-crafter/issues/new/choose" class="navigation">Report an issue</a>
+      <a href="https://github.com/the8tre/gdocs-chords-grid-crafter/issues/new/choose" class="navigation">{{ site.data.l10n.report_an_issue }}</a>
+      <span class="navigation">|</span>
+      {%- include lang-switcher.html -%}
     </div>
-    <div id="google_translate_element"></div>
-
   </header>
 </div>
 
@@ -46,26 +46,6 @@
 </div>
 
 <!-- FOOTER  -->
-<div id="footer_wrap" class="outer">
-  <footer class="inner">
-    {% if site.github.is_project_page %}
-    <p class="copyright">{{ site.title | default: site.github.repository_name }} maintained by <a
-      href="{{ site.github.owner_url }}">Ludovic Engrand</a></p>
-    {% endif %}
-    <p><a href="/terms_of_service.html">Terms of service</a> | <a href="/privacy_policy.html">Privacy policy</a></p>
-  </footer>
-</div>
-
-<script type="text/javascript">
-  function googleTranslateElementInit() {
-    new google.translate.TranslateElement(
-      { pageLanguage: "en" },
-      "google_translate_element"
-    );
-  }
-</script>
-
-<script type="text/javascript"
-        src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+{%- include footer.html -%}
 </body>
 </html>
