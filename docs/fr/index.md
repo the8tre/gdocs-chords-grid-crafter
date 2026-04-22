@@ -9,7 +9,7 @@ La notation en grille d’accords est un outil très utile pour s’assurer que 
 Cette extension vous permet de créer et de maintenir vos grilles d’accords directement depuis votre document Google Docs.  
 Elle insère votre grille dans le document en cours d’édition et vous permet de la modifier ultérieurement si nécessaire.
 
-<img src="assets/images/overview.png" width="800px"/> 
+<img src="assets/images/overview.png"/> 
 
 ## Installation
 Installez-la depuis le [Google Workspace Marketplace](https://workspace.google.com/marketplace/app/chords_grid_crafter/288629459826).
@@ -22,6 +22,7 @@ Chaque champ de saisie représente 1 mesure de votre musique.
 Saisissez vos accords dans le champ texte en les séparant par un espace.  
 <img src="assets/images/basic_usage.png" width="200px"/><br/>
 Vous pouvez saisir jusqu’à 4 accords par mesure, qui seront automatiquement disposés dans la grille comme suit :
+
 | Nombre d’accords | Aperçu                                                    | Détails                                                                                                                                                                              |
 | ---------------- | --------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | 1                | <img src="assets/images/1_chord.png" width="100px"/>      |                                                                                                                                                                                      |
@@ -36,6 +37,7 @@ Une fois la première mesure saisie, cliquez sur le bouton `+` ou appuyez sur `[
 > Vous pouvez naviguer entre les lignes avec les touches fléchées haut/bas du clavier.
 
 Une fois toutes vos mesures saisies, placez le curseur dans le document à l’endroit souhaité et cliquez sur le bouton `Insérer / Remplacer` :  
+
 | Saisie                                              | Résultat                                                 |
 | --------------------------------------------------- | -------------------------------------------------------- |
 | <img src="assets/images/insert.png" width="200px"/> | <img src="assets/images/simple_grid.png" width="200px"/> |
@@ -45,7 +47,7 @@ Une fois toutes vos mesures saisies, placez le curseur dans le document à l’e
 ### Modifier une grille existante
 Pour apporter des modifications à une grille d’accords déjà créée, sélectionnez-la dans votre document et cliquez sur le bouton `Charger la sélection`.  
 L’éditeur sera rempli avec le contenu de votre grille, en conservant tous les paramètres initiaux (échelle, police, etc.).  
-<img src="assets/images/re_edit.png" width="500px"/>
+<img src="assets/images/re_edit.png"/>
 
 ## Paramètres
 

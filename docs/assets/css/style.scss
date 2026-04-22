@@ -25,8 +25,49 @@
     -webkit-box-shadow: none;
 }
 
+#logo-container {
+    text-align: center;
+}
+
 #google_translate_element {
     position: absolute;
     top: 50px;
     right: 0px;
+}
+
+img {
+    max-width: 100%;
+    height: auto;
+}
+
+html, body {
+    overflow-x: hidden;
+    max-width: 100%;
+}
+
+@media screen and (max-width: 767px) {
+    .inner {
+        min-width: 0;
+        max-width: 100%;
+        padding: 20px 15px;
+    }
+
+    .navigation {
+        white-space: normal;
+        font-size: 14px;
+    }
+
+    #project_title {
+        font-size: 22px;
+    }
+
+    #project_tagline {
+        font-size: 13px;
+    }
+
+    table {
+        display: block;
+        overflow-x: auto;
+        max-width: 100%;
+    }
 }

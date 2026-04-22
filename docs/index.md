@@ -9,7 +9,7 @@ The Chords Grid notation is a very useful tool when you want to make sure all me
 This add-on is meant to help you to write and maintain your Chords Grids straight from your Google Docs document.  
 It outputs your grid into the document being edited and let's you re-edit it later if you need to bring some changes.
 
-<img src="/assets/images/overview.png" width="800px"/> 
+<img src="/assets/images/overview.png"/> 
 
 ## Install it
 Just install it from the [Google Workspace Marketplace](https://workspace.google.com/marketplace/app/chords_grid_crafter/288629459826)
@@ -22,6 +22,7 @@ Each input field represents 1 bar of your music.
 Enter your chords into the text field and separate them with a space.  
 <img src="/assets/images/basic_usage.png" width="200px"/><br/>
 You can enter up to 4 chords per bar which will be automatically arranged into the grid as follows:
+
 | Chords count  | Preview                                                    | Details                                                                                                                                                       |
 | ------------- | ---------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | 1             | <img src="/assets/images/1_chord.png" width="100px"/>      |                                                                                                                                                               |
@@ -36,6 +37,7 @@ Once you're done with this first bar click the `+` button or hit the `[Enter]` k
 > You can navigate through the rows using your keyboard arrow key up/down.
 
 Once you're done entering all you bars you're ready to insert it into your document. Place the cursor in the document where you want to insert your drid and click the `Insert / Replace` button:  
+
 | Input                                                | Result                                                    |
 | ---------------------------------------------------- | --------------------------------------------------------- |
 | <img src="/assets/images/insert.png" width="200px"/> | <img src="/assets/images/simple_grid.png" width="200px"/> |
@@ -45,7 +47,7 @@ Once you're done entering all you bars you're ready to insert it into your docum
 ### Re-edit an existing Chords Grid
 If you need to make some changes to a Chords Grid you previously created simply select it in your document and click the `Load selection` button.  
 The editor will be populated with the content of your grid, keeping track of all initial settings (scale, font etc).  
-<img src="/assets/images/re_edit.png" width="500px"/>
+<img src="/assets/images/re_edit.png"/>
 
 ## Settings
 
