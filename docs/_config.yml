@@ -22,7 +22,7 @@ title: Chords Grid Crafter Addon
 description: Easily create and edit chord grids for your songs
 email: info@chords-grid-crafter.fr
 baseurl: "" # the subpath of your site, e.g. /blog
-# url: "https://chords-grid-crafter.fr" # the base hostname & protocol for your site, e.g. http://example.com
+url: "https://chords-grid-crafter.fr"
 github_username: the8tre
 
 plugins:
