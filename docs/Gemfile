@@ -11,7 +11,7 @@ gem "jekyll", "~> 4.3"
 gem "jekyll-theme-slate", "~> 0.2.0"
 # If you have any plugins, put them here!
 group :jekyll_plugins do
-  gem "jekyll-polyglot", "~> 1.5.1"
+  gem "jekyll-polyglot", "~> 1.8"
   # gem "jekyll-feed", "~> 0.12"
 end
 
