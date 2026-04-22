@@ -1,12 +1,16 @@
+---
+layout: default
+lang: fr
+permalink: /privacy_policy.html
+---
 # Politique de confidentialité
-Privacy Policy ("Policy")
 
-_Last updated: December 30, 2024_
+_Dernière mise à jour : 30 décembre 2024_
 
-Please read this Privacy Policy ("Policy") carefully before using the Google Docs Add-On called **Chords Grid Crafter** (the "Add-On") operated by **Chords Grid Crafter** ("The Developer", "Us", "We", or "Our").
+Veuillez lire attentivement cette Politique de confidentialité (« Politique ») avant d'utiliser l'extension Google Docs appelée **Chords Grid Crafter** (l'« Extension »), exploitée par **Chords Grid Crafter** (« Le Développeur », « Nous »).
 
-The Add-On needs access to read and write the currently open Google Document in order insert new images or read existing images "alt-description". None of the information it reads or writes is sent to The Developer. All your data is your data and while the Add-On script does read and write the contents of the Google Doc where it is activated by the user, The Developer does not have access to any of that information.
+L'Extension nécessite un accès en lecture et en écriture au document Google actuellement ouvert afin d'insérer de nouvelles images ou de lire la description alternative (« alt-description ») des images existantes. Aucune des informations lues ou écrites n'est transmise au Développeur. Toutes vos données vous appartiennent ; bien que le script de l'Extension lise et modifie le contenu du document Google Docs dans lequel il est activé, le Développeur n'a accès à aucune de ces informations.
 
-Note that in using Google Docs at all, you are of course subject to [Google's Privacy Policy](https://www.google.com/url?q=https://policies.google.com/privacy&sa=D&source=editors&ust=1614060557631000&usg=AOvVaw2-hLdtFwY3Gv5hwq29QkYt). Furthermore, this Add-On complies with all terms of the [Google API Service User Data Policy](https://developers.google.com/terms/api-services-user-data-policy).
+Notez qu'en utilisant Google Docs, vous êtes bien entendu soumis à la [Politique de confidentialité de Google](https://www.google.com/url?q=https://policies.google.com/privacy&sa=D&source=editors&ust=1614060557631000&usg=AOvVaw2-hLdtFwY3Gv5hwq29QkYt). De plus, cette Extension respecte l'ensemble des conditions de la [Politique relative aux données utilisateur des services API Google](https://developers.google.com/terms/api-services-user-data-policy).
 
-The Developer does not have any access to your personal information based on your use of the Add-On, including email addresses of users, or any other personally identifying information about them. The Developer is not interested in your personal information. The Developer made this Google Docs Add-on because they thought it would be a nice tool to have. The Developer is just a code-loving and bass-loving geek with a day job. The Add-On is a hobby from which The Developer derives no income. The Developer hopes you enjoy it!
+Le Développeur n'a accès à aucune de vos informations personnelles dans le cadre de votre utilisation de l'Extension, notamment vos adresses e-mail ou toute autre information permettant de vous identifier. Le Développeur ne s'intéresse pas à vos données personnelles. Il a créé cette extension Google Docs parce qu'il pensait que ce serait un outil utile. C'est un projet hobby dont il ne tire aucun revenu. Il espère que vous l'apprécierez !

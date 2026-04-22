@@ -8,9 +8,11 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "lint": "gts lint",
     "clean": "gts clean",
-    "build": "tsc",
-    "dev": "clasp push --watch --force",
-    "fix": "gts fix"
+    "build": "tsc && cp appsscript.json build/ && cp src/sidebar.html build/src/",
+    "build:watch": "tsc --watch",
+    "push": "clasp push --watch",
+    "fix": "gts fix",
+    "docs:serve": "cd docs && bundle exec jekyll serve --livereload"
   },
   "repository": {
     "type": "git",
@@ -23,12 +25,12 @@
   },
   "homepage": "https://github.com/the8tre/gdocs-chords-grid-crafter#readme",
   "dependencies": {
-    "@google/clasp": "^2.4.2",
-    "@types/google-apps-script": "^1.0.89"
+    "@types/google-apps-script": "^2.0.8"
   },
   "devDependencies": {
-    "@types/node": "^20.8.9",
-    "gts": "^5.2.0",
-    "typescript": "^5.2.2"
+    "@google/clasp": "^3.0.0",
+    "@types/node": "^25.0.0",
+    "gts": "^7.0.0",
+    "typescript": "^6.0.0"
   }
 }

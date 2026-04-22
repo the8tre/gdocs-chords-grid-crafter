@@ -133,7 +133,12 @@ function getLocalizedStrings(): any {
     },
   };
 
-  const locale = Session.getActiveUserLocale(); // E.g., "en", "fr"
-  // const locale = "en";
-  return strings[locale] || strings["en"]; // Default to English if locale not found
+  let locale = "en";
+  try {
+    locale = Session.getActiveUserLocale();
+    locale = locale.split("_")[0]; // Use only the language code (e.g., "en" from "en_US")
+  } catch (e) {
+    console.error("Failed to get user locale:", e);
+  }
+  return strings[locale] || strings["en"];
 }

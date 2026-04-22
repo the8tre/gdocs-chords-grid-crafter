@@ -1,3 +1,8 @@
+---
+layout: default
+lang: en
+permalink: /privacy_policy.html
+---
 # Privacy Policy
 Privacy Policy ("Policy")
 

@@ -24,14 +24,18 @@
       <img id="logo" src="/assets/images/application-card-banner.png">
     </div>
     <div id="header-container">
-      <h1 id="project_title">{{ site.data.l10n.title | default: site.github.repository_name }}</h1>
-      <h2 id="project_tagline">{{ site.data.l10n.description | default: site.github.project_tagline }}</h2>
+      <h1 id="project_title">{{ site.data[site.active_lang].l10n.title | default: site.github.repository_name }}</h1>
+      <h2 id="project_tagline">{{ site.data[site.active_lang].l10n.description | default: site.github.project_tagline }}</h2>
     </div>
     <br>
     <div class="navigation-stripe">
-      <a href="{{ site.baseurl }}/index.html" class="navigation">{{ site.data.l10n.documentation }}</a>
+      {% if site.active_lang == site.default_lang %}
+      <a href="{{ site.baseurl }}/index.html" class="navigation">{{ site.data[site.active_lang].l10n.documentation }}</a>
+      {% else %}
+      <a href="{{ site.baseurl }}/{{ site.active_lang }}/index.html" class="navigation">{{ site.data[site.active_lang].l10n.documentation }}</a>
+      {% endif %}
       <span class="navigation">|</span>
-      <a href="https://github.com/the8tre/gdocs-chords-grid-crafter/issues/new/choose" class="navigation">{{ site.data.l10n.report_an_issue }}</a>
+      <a href="https://github.com/the8tre/gdocs-chords-grid-crafter/issues/new/choose" class="navigation">{{ site.data[site.active_lang].l10n.report_an_issue }}</a>
       <span class="navigation">|</span>
       {%- include lang-switcher.html -%}
     </div>

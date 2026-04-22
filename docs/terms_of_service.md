@@ -1,3 +1,8 @@
+---
+layout: default
+lang: en
+permalink: /terms_of_service.html
+---
 # Terms of Service
 Terms of Service ("Terms")
 

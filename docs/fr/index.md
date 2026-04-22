@@ -1,69 +1,74 @@
-## French Motivation and description 
-The Chords Grid notation is a very useful tool when you want to make sure all members of your band are aligned on what they should play. You can learn more [here](https://en.wikipedia.org/wiki/Chord_chart#Grid_notation) and [here](https://www.imusic-school.com/blog/fr-guitare/debuter-guitare/grille-accords/)
+---
+layout: default
+lang: fr
+permalink: /index.html
+---
+## Motivation et description
+La notation en grille d’accords est un outil très utile pour s’assurer que tous les membres de votre groupe jouent la même chose. Pour en savoir plus, consultez [cet article](https://en.wikipedia.org/wiki/Chord_chart#Grid_notation) et [celui-ci](https://www.imusic-school.com/blog/fr-guitare/debuter-guitare/grille-accords/).
 
-This add-on is meant to help you to write and maintain your Chords Grids straight from your Google Docs document.  
-It outputs your grid into the document being edited and let's you re-edit it later if you need to bring some changes.
+Cette extension vous permet de créer et de maintenir vos grilles d’accords directement depuis votre document Google Docs.  
+Elle insère votre grille dans le document en cours d’édition et vous permet de la modifier ultérieurement si nécessaire.
 
 <img src="assets/images/overview.png" width="800px"/> 
 
-## Install it
-Just install it from the [Google Workspace Marketplace](https://workspace.google.com/marketplace/app/chords_grid_crafter/288629459826)
+## Installation
+Installez-la depuis le [Google Workspace Marketplace](https://workspace.google.com/marketplace/app/chords_grid_crafter/288629459826).
 
-## Run it
-The add-on can be used from any opened Google document in the menu `Addons -> Chords Grid Crafter -> Show panel`. This will open a sidebar with all the functionality provided.
+## Lancement
+L’extension est accessible depuis n’importe quel document Google Docs ouvert via le menu `Extensions -> Chords Grid Crafter -> Afficher le panneau`. Cela ouvre un panneau latéral avec toutes les fonctionnalités disponibles.
 
-## Use it
-Each input field represents 1 bar of your music.  
-Enter your chords into the text field and separate them with a space.  
+## Utilisation
+Chaque champ de saisie représente 1 mesure de votre musique.  
+Saisissez vos accords dans le champ texte en les séparant par un espace.  
 <img src="assets/images/basic_usage.png" width="200px"/><br/>
-You can enter up to 4 chords per bar which will be automatically arranged into the grid as follows:
-| Chords count  | Preview                                                   | Details                                                                                                                                                      |
-| ------------- | --------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| 1             | <img src="assets/images/1_chord.png" width="100px"/>      |                                                                                                                                                              |
-| 2             | <img src="assets/images/2_chords.png" width="100px"/>     |                                                                                                                                                              |
-| 3             | <img src="assets/images/3_chords.png" width="100px"/>     |                                                                                                                                                              |
-| 3 alternative | <img src="assets/images/3_chords_alt.png" width="100px"/> | When you entered 3 chords you can select an alternative split of the bar using the dedicated button: <img src="assets/images/alt_layout.png" width="200px"/> |
-| 4             | <img src="assets/images/4_chords.png" width="100px"/>     |                                                                                                                                                              |
+Vous pouvez saisir jusqu’à 4 accords par mesure, qui seront automatiquement disposés dans la grille comme suit :
+| Nombre d’accords | Aperçu                                                    | Détails                                                                                                                                                                              |
+| ---------------- | --------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| 1                | <img src="assets/images/1_chord.png" width="100px"/>      |                                                                                                                                                                                      |
+| 2                | <img src="assets/images/2_chords.png" width="100px"/>     |                                                                                                                                                                                      |
+| 3                | <img src="assets/images/3_chords.png" width="100px"/>     |                                                                                                                                                                                      |
+| 3 alternatif     | <img src="assets/images/3_chords_alt.png" width="100px"/> | Avec 3 accords, vous pouvez sélectionner une disposition alternative de la mesure via le bouton dédié : <img src="assets/images/alt_layout.png" width="200px"/> |
+| 4                | <img src="assets/images/4_chords.png" width="100px"/>     |                                                                                                                                                                                      |
 
-Once you're done with this first bar click the `+` button or hit the `[Enter]` key to add a new row and start editing it:  
+Une fois la première mesure saisie, cliquez sur le bouton `+` ou appuyez sur `[Entrée]` pour ajouter une nouvelle ligne :  
 <img src="assets/images/add_row.png" width="200px"/>
 > 💡
-> You can navigate through the rows using your keyboard arrow key up/down.
+> Vous pouvez naviguer entre les lignes avec les touches fléchées haut/bas du clavier.
 
-Once you're done entering all you bars you're ready to insert it into your document. Place the cursor in the document where you want to insert your drid and click the `Insert / Replace` button:  
-| Input                                               | Result                                                   |
+Une fois toutes vos mesures saisies, placez le curseur dans le document à l’endroit souhaité et cliquez sur le bouton `Insérer / Remplacer` :  
+| Saisie                                              | Résultat                                                 |
 | --------------------------------------------------- | -------------------------------------------------------- |
 | <img src="assets/images/insert.png" width="200px"/> | <img src="assets/images/simple_grid.png" width="200px"/> |
 
 
 
-### Re-edit an existing Chords Grid
-If you need to make some changes to a Chords Grid you previously created simply select it in your document and click the `Load selection` button.  
-The editor will be populated with the content of your grid, keeping track of all initial settings (scale, font etc).  
+### Modifier une grille existante
+Pour apporter des modifications à une grille d’accords déjà créée, sélectionnez-la dans votre document et cliquez sur le bouton `Charger la sélection`.  
+L’éditeur sera rempli avec le contenu de votre grille, en conservant tous les paramètres initiaux (échelle, police, etc.).  
 <img src="assets/images/re_edit.png" width="500px"/>
 
-## Settings
+## Paramètres
 
-### Shape
-Choose to render each cell of the grid as:
-- A square
+### Forme
+Choisissez le rendu de chaque cellule de la grille :
+- Carré
   - <img src="assets/images/square.png" width="100px"/>
-- A Rectangle
+- Rectangle
   - <img src="assets/images/rectangle.png" width="100px"/>
 
-### Font
-Choose the output font from the dropdown.  
-The font is used both in the preview panel and when inserting in the document.
+### Police
+Choisissez la police d’affichage dans la liste déroulante.  
+La police est utilisée à la fois dans le panneau d’aperçu et lors de l’insertion dans le document.
 
-### Chords reading order
-Choose from dropdown whether the chords should be read clockwise or not:
-- Clockwise
+### Ordre de lecture des accords
+Choisissez dans la liste déroulante si les accords doivent être lus dans le sens horaire ou non :
+- Sens horaire
   - <img src="assets/images/4_clockwise.png" width="100px"/> <img src="assets/images/3_clockwise.png" width="100px"/>
-- Non-clockwise
+- Sens anti-horaire
   - <img src="assets/images/4_non_clockwise.png" width="100px"/> <img src="assets/images/3_non_clockwise.png" width="100px"/>
 
-### Output scale
-Scales the grid to the specified percentage.
+### Échelle de sortie
+Redimensionne la grille au pourcentage spécifié.
 
-## Issues or ideas for improvement
-The plugin is just a hobby project of mine and is non-profitable. The code is open source and can be found [here](https://github.com/the8tre/gdocs-chords-grid-crafter) on GitHub. It does not collect any data of yours or read documents outside the document being edited. If you have any idea for improvement or encounter any issue, please let me know, and I’d be happy to resolve it if my time schedule allows me to.
+## Problèmes ou idées d’amélioration
+Ce plugin est un projet personnel et non lucratif. Le code est open source et disponible [ici](https://github.com/the8tre/gdocs-chords-grid-crafter) sur GitHub. Il ne collecte aucune de vos données et ne lit pas de documents autres que celui en cours d’édition. Si vous avez des idées d’amélioration ou si vous rencontrez un problème, n’hésitez pas à me le faire savoir — je ferai de mon mieux pour y répondre selon mes disponibilités.

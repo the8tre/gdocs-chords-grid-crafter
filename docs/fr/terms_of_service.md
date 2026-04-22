@@ -1,23 +1,27 @@
+---
+layout: default
+lang: fr
+permalink: /terms_of_service.html
+---
 # Conditions d'utilisation
-Terms of Service ("Terms")
 
-_Last updated: December 30, 2024_
+_Dernière mise à jour : 30 décembre 2024_
 
-Please read these Terms of Service ("Terms", "Terms of Service") carefully before using the **Chords Grid Crafter** add-on (the "Service") operated by **Chords Grid Crafter** ("us", "we", or "our").
+Veuillez lire attentivement ces Conditions d'utilisation (« Conditions ») avant d'utiliser l'extension **Chords Grid Crafter** (le « Service »), exploitée par **Chords Grid Crafter** (« nous »).
 
-Your access to and use of the Service is conditioned on your acceptance of and compliance with these Terms. These Terms apply to all visitors, users and others who access or use the Service.
+Votre accès au Service et son utilisation sont conditionnés à votre acceptation et au respect de ces Conditions. Elles s'appliquent à tous les visiteurs, utilisateurs et personnes qui accèdent au Service ou l'utilisent.
 
-By accessing or using the Service you agree to be bound by these Terms. If you disagree with any part of the terms then you may not access the Service. The Terms of Service agreement for Guitar Chord Tools has been created with the help of TermsFeed.
+En accédant au Service ou en l'utilisant, vous acceptez d'être lié par ces Conditions. Si vous n'êtes pas d'accord avec une partie des Conditions, vous ne pouvez pas accéder au Service.
 
-## Governing Law
-These Terms shall be governed and construed in accordance with the laws of Paris, France, without regard to its conflict of law provisions.
+## Droit applicable
+Ces Conditions sont régies et interprétées conformément aux lois de Paris, France, sans égard à ses dispositions en matière de conflits de lois.
 
-Our failure to enforce any right or provision of these Terms will not be considered a waiver of those rights. If any provision of these Terms is held to be invalid or unenforceable by a court, the remaining provisions of these Terms will remain in effect. These Terms constitute the entire agreement between us regarding our Service, and supersede and replace any prior agreements we might have between us regarding the Service.
+Le fait que nous ne fassions pas valoir un droit ou une disposition de ces Conditions ne constitue pas une renonciation à ces droits. Si une disposition de ces Conditions est jugée invalide ou inapplicable par un tribunal, les autres dispositions restent en vigueur. Ces Conditions constituent l'intégralité de l'accord entre nous concernant le Service et remplacent tout accord antérieur.
 
-## Changes
-We reserve the right, at our sole discretion, to modify or replace these Terms at any time. If a revision is material we will try to provide at least 30 days notice prior to any new terms taking effect. What constitutes a material change will be determined at our sole discretion.
+## Modifications
+Nous nous réservons le droit, à notre seule discrétion, de modifier ou de remplacer ces Conditions à tout moment. En cas de modification significative, nous tenterons de vous en informer au moins 30 jours avant l'entrée en vigueur des nouvelles conditions. Ce qui constitue une modification significative sera déterminé à notre seule discrétion.
 
-By continuing to access or use our Service after those revisions become effective, you agree to be bound by the revised terms. If you do not agree to the new terms, please stop using the Service.
+En continuant à accéder au Service ou à l'utiliser après l'entrée en vigueur des révisions, vous acceptez d'être lié par les conditions révisées. Si vous n'acceptez pas les nouvelles conditions, veuillez cesser d'utiliser le Service.
 
-## Contact Us
-If you have any questions about these Terms, please contact us.
+## Nous contacter
+Pour toute question concernant ces Conditions, veuillez nous contacter.
