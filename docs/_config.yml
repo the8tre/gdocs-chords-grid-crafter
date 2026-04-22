@@ -30,7 +30,7 @@ plugins:
 # Build settings
 
 theme: jekyll-theme-slate
-markdown: GFM
+markdown: kramdown
 exclude:
   - .sass-cache/
   - .jekyll-cache/
