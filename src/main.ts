@@ -104,7 +104,7 @@ function getLocalizedStrings(): any {
         "Please place the cursor where you want to insert the grid or select an existing CGC Chord Grid.",
       labelDocumentation: "documentation",
       documentationUrl:
-        "https://github.com/the8tre/gdocs-chords-grid-crafter/wiki",
+        "https://chords-grid-crafter.fr",
       labelShape: "Shape",
       labelRectangle: "Rectangle",
       labelSquare: "Square",
@@ -126,7 +126,7 @@ function getLocalizedStrings(): any {
         "Placez le cusrseur au point d'insertion de la grille ou sélectionnez une grille d'accords CGC existante.",
       labelDocumentation: "documentation",
       documentationUrl:
-        "https://github.com/the8tre/gdocs-chords-grid-crafter/wiki/Home-fr-FR",
+        "https://chords-grid-crafter.fr/fr",
       labelShape: "Forme",
       labelRectangle: "Rectangle",
       labelSquare: "Carré",
