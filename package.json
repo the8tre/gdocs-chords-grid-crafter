@@ -1,6 +1,6 @@
 {
   "name": "gdocs-chords-grid-crafter",
-  "version": "1.3.0",
+  "version": "1.4.1",
   "description": "Create chords grids in Google Docs",
   "main": "build/src/main.js",
   "types": "build/src/main.d.ts",
@@ -10,7 +10,7 @@
     "clean": "gts clean",
     "build": "tsc && cp appsscript.json build/ && cp src/sidebar.html build/src/",
     "build:watch": "tsc --watch",
-    "push": "clasp push --watch",
+    "push": "npm run lint && npm run clean && npm run build && clasp push",
     "fix": "gts fix",
     "docs:serve": "cd docs && bundle exec jekyll serve --livereload"
   },

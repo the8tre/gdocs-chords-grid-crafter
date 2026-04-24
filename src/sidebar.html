@@ -5,45 +5,65 @@
     <base target="_top" />
     <style>
       body {
-        font-family: "arial";
+        font-family: 'arial';
         padding: 10px;
       }
+
       body.lock {
         overflow: hidden;
       }
+
       .preview {
+        background-color: white;
         border: 4px solid #4285f4;
         border-radius: 10px;
         display: block;
         margin: 10px auto;
         padding: 10px;
       }
+
       .row-buttons {
         display: flex;
         justify-content: space-between;
         align-items: center;
         margin-bottom: 10px;
       }
+
       .left-buttons {
         display: flex;
       }
+
       .left-buttons span {
         font-size: 18px;
       }
+
       .right-button {
         margin-left: auto;
       }
+
+      .transpose-div {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+      }
+
+      .apply-transpose-button {
+        flex: 1;
+      }
+
       .grid-row {
         display: flex;
         align-items: baseline;
         width: 100%;
       }
+
       .row-index {
         font-size: 18px;
         width: 20px;
         margin-right: 5px;
         text-align: right;
       }
+
       .chord-div {
         display: flex;
         border: 4px solid #c6c6c6;
@@ -51,15 +71,18 @@
         margin-bottom: 5px;
         width: 100%;
       }
+
       .chord-input {
         display: flex;
         width: 100%;
         font-size: 18px !important;
         border: none !important;
       }
+
       .focused {
         border: 4px solid #4285f4;
       }
+
       .rotate {
         display: flex;
         vertical-align: sub;
@@ -67,20 +90,25 @@
         margin-left: 5px;
         margin-right: 5px;
       }
+
       .action-panel {
         margin-top: 20px;
       }
+
       .action-panel button {
         margin-left: 0px;
       }
+
       .full-width {
         margin-top: 2pt !important;
         margin-bottom: 3pt !important;
         width: 100%;
       }
+
       .hidden {
         display: none !important;
       }
+
       #busy-overlay {
         position: absolute;
         color: #fff;
@@ -95,14 +123,17 @@
         overflow-y: hidden;
         overflow-x: hidden;
       }
+
       #busy-overlay span {
         vertical-align: middle;
         margin-right: 5px;
       }
+
       @keyframes spin {
         from {
           transform: rotate(0deg);
         }
+
         to {
           transform: rotate(360deg);
         }
@@ -121,19 +152,24 @@
         margin-bottom: 0px;
         font-weight: bold;
       }
+
       .settings-block {
         display: block;
       }
+
       .setting-name {
         margin-top: 10px;
       }
+
       .clockwise {
         display: inline-block;
         vertical-align: middle;
       }
+
       .footer {
         margin-top: 50px;
       }
+
       /* Dropdown Container */
       .dropdown {
         position: relative;
@@ -212,6 +248,7 @@
       rel="stylesheet"
     />
   </head>
+
   <body class="lock">
     <div id="busy-overlay">
       <span class="material-symbols-outlined spin">progress_activity</span
@@ -225,8 +262,10 @@
     ></canvas>
     <div class="row-buttons">
       <div class="left-buttons">
-        <button onclick="addRow()"><span>+</span></button>
-        <button onclick="removeRow()"><span>-</span></button>
+        <button id="button-add-row" onclick="addRow()"><span>+</span></button>
+        <button id="button-remove-row" onclick="removeRow()">
+          <span>-</span>
+        </button>
       </div>
       <button id="button-clear" class="right-button" onclick="removeAll()">
         Clear
@@ -248,6 +287,26 @@
       >
         Load from selection
       </button>
+      <div id="label-transpose" class="action">Transpose</div>
+      <div class="transpose-div">
+        <input
+          type="number"
+          id="field-transpose"
+          min="-12"
+          max="12"
+          value="0"
+          onchange="changeTranspose(false)"
+        />
+        <span id="label-semitones">semitone(s)</span>
+        <button
+          id="button-transpose-apply"
+          class="share apply-transpose-button"
+          disabled="Disabled"
+          onclick="applyTranspose()"
+        >
+          Apply
+        </button>
+      </div>
     </div>
     <div id="title-settings" class="block-title">Settings</div>
     <div class="settings-block">
@@ -281,35 +340,35 @@
 
         <!-- Dropdown Content -->
         <div class="dropdown-content">
-          <div class="dropdown-item" onclick="clockwise(true);">
+          <div class="dropdown-item" onclick="clockwise(true)">
             <!-- prettier-ignore -->
             <svg width="40" height="27" id="clockwise-image">
-              <rect width="40" height="27" fill="#fff" stroke="#000" stroke-width="1"></rect>
-              <circle cx="8" cy="13.5" r="2" fill="#000" stroke="#000"></circle>
-              <circle cx="32" cy="13.5" r="2" fill="#000" stroke="#000"></circle>
-              <circle cx="20" cy="6.75" r="2" fill="#000" stroke="#000"></circle>
-              <circle cx="20" cy="20.25" r="2" fill="#000" stroke="#000"></circle>
-              <line fill="#fff" stroke="#000" stroke-width="1" x1="0" y1="0" x2="40" y2="27"></line>
-              <line fill="#fff" stroke="#000" stroke-width="1" x1="0" y1="27" x2="40" y2="0"></line>
-              <line x1="8" y1="13.5" x2="20" y2="6.75" stroke="#f00" stroke-width="3"></line>
-              <line x1="20" y1="6.75" x2="32" y2="13.5" stroke="#f00" stroke-width="3"></line>
-              <line x1="32" y1="13.5" x2="20" y2="20.25" stroke="#f00" stroke-width="3"></line>
-            </svg>
+            <rect width="40" height="27" fill="#fff" stroke="#000" stroke-width="1"></rect>
+            <circle cx="8" cy="13.5" r="2" fill="#000" stroke="#000"></circle>
+            <circle cx="32" cy="13.5" r="2" fill="#000" stroke="#000"></circle>
+            <circle cx="20" cy="6.75" r="2" fill="#000" stroke="#000"></circle>
+            <circle cx="20" cy="20.25" r="2" fill="#000" stroke="#000"></circle>
+            <line fill="#fff" stroke="#000" stroke-width="1" x1="0" y1="0" x2="40" y2="27"></line>
+            <line fill="#fff" stroke="#000" stroke-width="1" x1="0" y1="27" x2="40" y2="0"></line>
+            <line x1="8" y1="13.5" x2="20" y2="6.75" stroke="#f00" stroke-width="3"></line>
+            <line x1="20" y1="6.75" x2="32" y2="13.5" stroke="#f00" stroke-width="3"></line>
+            <line x1="32" y1="13.5" x2="20" y2="20.25" stroke="#f00" stroke-width="3"></line>
+          </svg>
           </div>
-          <div class="dropdown-item" onclick="clockwise(false);">
+          <div class="dropdown-item" onclick="clockwise(false)">
             <!-- prettier-ignore -->
             <svg width="40" height="27" id="non-clockwise-image">
-              <rect width="40" height="27" fill="#fff" stroke="#000" stroke-width="1"></rect>
-              <circle cx="8" cy="13.5" r="2" fill="#000" stroke="#000"></circle>
-              <circle cx="32" cy="13.5" r="2" fill="#000" stroke="#000"></circle>
-              <circle cx="20" cy="6.75" r="2" fill="#000" stroke="#000"></circle>
-              <circle cx="20" cy="20.25" r="2" fill="#000" stroke="#000"></circle>
-              <line fill="#fff" stroke="#000" stroke-width="1" x1="0" y1="0" x2="40" y2="27"></line>
-              <line fill="#fff" stroke="#000" stroke-width="1" x1="0" y1="27" x2="40" y2="0"></line>
-              <line x1="8" y1="13.5" x2="20" y2="6.75" stroke="#f00" stroke-width="3"></line>
-              <line x1="20" y1="6.75" x2="20" y2="20.25" stroke="#f00" stroke-width="3"></line>
-              <line x1="32" y1="13.5" x2="20" y2="20.25" stroke="#f00" stroke-width="3"></line>
-            </svg>
+            <rect width="40" height="27" fill="#fff" stroke="#000" stroke-width="1"></rect>
+            <circle cx="8" cy="13.5" r="2" fill="#000" stroke="#000"></circle>
+            <circle cx="32" cy="13.5" r="2" fill="#000" stroke="#000"></circle>
+            <circle cx="20" cy="6.75" r="2" fill="#000" stroke="#000"></circle>
+            <circle cx="20" cy="20.25" r="2" fill="#000" stroke="#000"></circle>
+            <line fill="#fff" stroke="#000" stroke-width="1" x1="0" y1="0" x2="40" y2="27"></line>
+            <line fill="#fff" stroke="#000" stroke-width="1" x1="0" y1="27" x2="40" y2="0"></line>
+            <line x1="8" y1="13.5" x2="20" y2="6.75" stroke="#f00" stroke-width="3"></line>
+            <line x1="20" y1="6.75" x2="20" y2="20.25" stroke="#f00" stroke-width="3"></line>
+            <line x1="32" y1="13.5" x2="20" y2="20.25" stroke="#f00" stroke-width="3"></line>
+          </svg>
           </div>
         </div>
       </div>
@@ -317,16 +376,36 @@
       <input type="number" id="field-scale" min="10" max="100" value="50" />%
     </div>
     <div class="footer">
-      <span class="gray">Chords Grid Crafter v1.3.0</span>
-      <a
-        id="doc-link"
-        target="_blank"
-        href="https://chords-grid-crafter.fr"
+      <span class="gray">Chords Grid Crafter v1.4.1</span>
+      <a id="doc-link" target="_blank" href="https://chords-grid-crafter.fr"
         >documentation</a
       >
     </div>
 
     <script>
+      const CHORDS_ARRAY = [
+        'a',
+        'bb',
+        'b',
+        'c',
+        'c#',
+        'd',
+        'eb',
+        'e',
+        'f',
+        'f#',
+        'g',
+        'g#',
+      ];
+      const CHORDS_FALLBACK = {
+        'a#': 'bb',
+        db: 'c#',
+        'd#': 'eb',
+        'e#': 'f',
+        gb: 'f#',
+        'g#': 'ab',
+        ab: 'g#',
+      };
       /**
        * Chords Grid Crafter Script section
        */
@@ -335,16 +414,17 @@
       let CELL_HEIGHT = 100;
       let CELL_RATIO = CELL_WIDTH / CELL_HEIGHT;
       const ChordLocation = {
-        CENTER: "CENTER",
-        H_LEFT: "H_LEFT",
-        H_RIGHT: "H_RIGHT",
-        Q_TOP: "Q_TOP",
-        Q_BOTTOM: "Q_BOTTOM",
-        Q_LEFT: "Q_LEFT",
-        Q_RIGHT: "Q_RIGHT",
+        CENTER: 'CENTER',
+        H_LEFT: 'H_LEFT',
+        H_RIGHT: 'H_RIGHT',
+        Q_TOP: 'Q_TOP',
+        Q_BOTTOM: 'Q_BOTTOM',
+        Q_LEFT: 'Q_LEFT',
+        Q_RIGHT: 'Q_RIGHT',
       };
       let LAST_FOCUSED;
       let CURRENT_MODEL = {};
+      let BACKUP_CHORDS = null;
       let DEFAULT_MODEL = {
         settings: {
           v: 1, // Version
@@ -353,16 +433,16 @@
           square: false, // Square shape
           font: {
             size: 45,
-            face: "Arial",
+            face: 'Arial',
             bold: true,
           },
         },
         g: {
-          0: { c: "Am Bb" },
+          0: {c: 'Am Bb'},
         },
       };
 
-      if (typeof google !== "undefined") {
+      if (typeof google !== 'undefined') {
         google.script.run
           .withSuccessHandler(setLocalizedStrings)
           .getLocalizedStrings();
@@ -372,35 +452,41 @@
 
       function setLocalizedStrings(strings) {
         LOCALIZED_STRINGS = strings;
-        document.getElementById("button-clear").innerText =
+        document.getElementById('button-clear').innerText =
           LOCALIZED_STRINGS.buttonClear;
-        document.getElementById("button-insert").innerText =
+        document.getElementById('button-insert').innerText =
           LOCALIZED_STRINGS.buttonInsert;
-        document.getElementById("button-load").innerText =
+        document.getElementById('button-load').innerText =
           LOCALIZED_STRINGS.buttonLoad;
-        document.getElementById("title-settings").innerText =
+        document.getElementById('title-settings').innerText =
           LOCALIZED_STRINGS.titleSettings;
-        document.getElementById("label-output-scale").innerText =
+        document.getElementById('label-output-scale').innerText =
           LOCALIZED_STRINGS.labelOutputScale;
-        document.getElementById("label-font").innerText =
+        document.getElementById('label-font').innerText =
           LOCALIZED_STRINGS.labelFont;
-        document.getElementById("label-chords-order").innerText =
+        document.getElementById('label-chords-order').innerText =
           LOCALIZED_STRINGS.labelChordsOrder;
-        document.getElementById("doc-link").innerText =
+        document.getElementById('doc-link').innerText =
           LOCALIZED_STRINGS.labelDocumentation;
-        document.getElementById("doc-link").href =
+        document.getElementById('doc-link').href =
           LOCALIZED_STRINGS.documentationUrl;
-        document.getElementById("label-shape").innerText =
+        document.getElementById('label-shape').innerText =
           LOCALIZED_STRINGS.labelShape;
-        document.getElementById("option-square").innerText =
+        document.getElementById('option-square').innerText =
           LOCALIZED_STRINGS.labelSquare;
-        document.getElementById("option-rectangle").innerText =
+        document.getElementById('option-rectangle').innerText =
           LOCALIZED_STRINGS.labelRectangle;
+        document.getElementById('label-transpose').innerText =
+          LOCALIZED_STRINGS.labelTranspose;
+        document.getElementById('label-semitones').innerText =
+          LOCALIZED_STRINGS.labelSemitones;
+        document.getElementById('button-transpose-apply').innerText =
+          LOCALIZED_STRINGS.buttonApply;
         setBusy(false);
       }
 
       async function changeFont(event) {
-        const fontSelect = document.getElementById("select-font");
+        const fontSelect = document.getElementById('select-font');
         const font = fontSelect.options[fontSelect.selectedIndex].value;
         CURRENT_MODEL.settings.font.face = font;
         await document.fonts.load(getFont());
@@ -410,13 +496,55 @@
       }
 
       function changeBold(event) {
-        const checkbox = document.getElementById("checkbox-bold");
+        const checkbox = document.getElementById('checkbox-bold');
         CURRENT_MODEL.settings.font.bold = checkbox.checked;
         focusElement(LAST_FOCUSED);
       }
 
+      function changeTranspose(apply) {
+        const semitones = parseInt(
+          document.getElementById('field-transpose').value,
+        );
+        const applyButton = document.getElementById('button-transpose-apply');
+        const enabled = !isNaN(semitones) && semitones !== 0;
+        applyButton.disabled = !enabled;
+
+        if (semitones === 0) {
+          if (!apply) {
+            CURRENT_MODEL.g = JSON.parse(JSON.stringify(BACKUP_CHORDS));
+          }
+          BACKUP_CHORDS = null;
+        } else if (BACKUP_CHORDS === null) {
+          BACKUP_CHORDS = JSON.parse(JSON.stringify(CURRENT_MODEL.g));
+        }
+        if (enabled) {
+          let i = 0;
+          for (const chordData of Object.values(CURRENT_MODEL.g)) {
+            const chords = BACKUP_CHORDS[i++].c.split(' ');
+            const transposedChords = chords.map(chord =>
+              transpose(chord, semitones),
+            );
+            chordData.c = transposedChords.join(' ');
+          }
+        }
+        const chordInputs = document.querySelectorAll('.chord-input');
+        for (let i = 0; i < chordInputs.length; i++) {
+          chordInputs[i].readOnly = enabled;
+          chordInputs[i].value = CURRENT_MODEL.g[i].c;
+        }
+        document.getElementById('button-add-row').disabled = enabled;
+        document.getElementById('button-remove-row').disabled = enabled;
+        document.getElementById('button-clear').disabled = enabled;
+        focusElement(LAST_FOCUSED);
+      }
+
+      function applyTranspose() {
+        document.getElementById('field-transpose').value = 0;
+        changeTranspose(true);
+      }
+
       function getFont(size) {
-        const bold = CURRENT_MODEL.settings.font.bold ? "bold " : "";
+        const bold = CURRENT_MODEL.settings.font.bold ? 'bold ' : '';
         const fontSize = size ? size : CURRENT_MODEL.settings.font.size;
         return `${bold}${fontSize}px "${CURRENT_MODEL.settings.font.face}"`;
       }
@@ -428,22 +556,26 @@
       function onKeyUp(event) {
         let eventKey = event.key;
         // Split element id: chord-input-12
-        const chordIndex = Number.parseInt(event.srcElement.id.split("-")[2]);
-        const gridElements = document.getElementById("grid-elements");
-        if (eventKey === "Enter") {
+        const chordIndex = Number.parseInt(event.srcElement.id.split('-')[2]);
+        const gridElements = document.getElementById('grid-elements');
+        if (eventKey === 'Enter') {
+          // Edit disabled during transpose
+          if (BACKUP_CHORDS !== null) {
+            return;
+          }
           if (chordIndex === gridElements.children.length - 1) {
             addRow();
             return;
           }
         }
         let nextInput = null;
-        if (eventKey === "ArrowUp") {
+        if (eventKey === 'ArrowUp') {
           nextInput = document.getElementById(
-            "chord-input-" + (chordIndex - 1)
+            'chord-input-' + (chordIndex - 1),
           );
-        } else if (eventKey === "ArrowDown" || eventKey === "Enter") {
+        } else if (eventKey === 'ArrowDown' || eventKey === 'Enter') {
           nextInput = document.getElementById(
-            "chord-input-" + (chordIndex + 1)
+            'chord-input-' + (chordIndex + 1),
           );
         }
         if (nextInput !== null) {
@@ -455,42 +587,42 @@
 
       function drawPreview(event) {
         const chordElement = event.srcElement;
-        const chordIndex = chordElement.id.split("-")[2];
+        const chordIndex = chordElement.id.split('-')[2];
         focusElement(chordElement);
         let chords = chordElement.value
           .trim()
-          .split(" ")
-          .filter((chord) => chord.length > 0);
+          .split(' ')
+          .filter(chord => chord.length > 0);
         if (chords.length > 4) {
-          const trimmedChords = chords.slice(0, 4).join(" ");
+          const trimmedChords = chords.slice(0, 4).join(' ');
           chordElement.value = trimmedChords;
           return;
         } else if (chords.length === 0) {
-          chords = ["-"];
+          chords = ['-'];
         }
 
-        const span = document.getElementById("chord-rotate-" + chordIndex);
+        const span = document.getElementById('chord-rotate-' + chordIndex);
         if (chords.length === 3) {
-          span.classList.remove("hidden");
+          span.classList.remove('hidden');
         } else {
-          span.classList.add("hidden");
+          span.classList.add('hidden');
         }
 
-        CURRENT_MODEL.g[chordIndex].c = chords.join(" ");
+        CURRENT_MODEL.g[chordIndex].c = chords.join(' ');
 
-        const canvas = document.getElementById("canvas-preview");
-        const ctx = canvas.getContext("2d");
+        const canvas = document.getElementById('canvas-preview');
+        const ctx = canvas.getContext('2d');
 
         drawChords(ctx, CURRENT_MODEL.g[chordIndex]);
       }
 
       function drawChords(ctx, chordData) {
-        const chords = chordData.c.split(" ");
+        const chords = chordData.c.split(' ');
         // Set up the font and styles
         ctx.font = getFont();
-        ctx.fillStyle = "#000";
-        ctx.textAlign = "center";
-        ctx.textBaseline = "alphabetic";
+        ctx.fillStyle = '#000';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'alphabetic';
 
         // Clear the canvas
         ctx.clearRect(0, 0, CELL_WIDTH, CELL_HEIGHT);
@@ -526,12 +658,12 @@
             drawChord(
               ctx,
               chords[CURRENT_MODEL.settings.cw ? 1 : 2],
-              ChordLocation.Q_RIGHT
+              ChordLocation.Q_RIGHT,
             );
             drawChord(
               ctx,
               chords[CURRENT_MODEL.settings.cw ? 2 : 1],
-              ChordLocation.Q_BOTTOM
+              ChordLocation.Q_BOTTOM,
             );
           }
           ctx.lineTo(CELL_WIDTH / 2, CELL_HEIGHT / 2);
@@ -547,12 +679,12 @@
           drawChord(
             ctx,
             chords[CURRENT_MODEL.settings.cw ? 2 : 3],
-            ChordLocation.Q_RIGHT
+            ChordLocation.Q_RIGHT,
           );
           drawChord(
             ctx,
             chords[CURRENT_MODEL.settings.cw ? 3 : 2],
-            ChordLocation.Q_BOTTOM
+            ChordLocation.Q_BOTTOM,
           );
         }
         ctx.stroke();
@@ -590,7 +722,7 @@
               ratio = constRatioX;
             }
             const scaledFontSize = Math.floor(
-              CURRENT_MODEL.settings.font.size * ratio
+              CURRENT_MODEL.settings.font.size * ratio,
             );
             ctx.font = getFont(scaledFontSize * 0.8);
             const scaledMetrics = ctx.measureText(chord);
@@ -623,7 +755,7 @@
           } else {
             const scale = CELL_HEIGHT / pseudoFullHeight;
             const scaledFontSize = Math.floor(
-              CURRENT_MODEL.settings.font.size * scale
+              CURRENT_MODEL.settings.font.size * scale,
             );
             ctx.font = getFont(scaledFontSize);
             const scaledMetrics = ctx.measureText(chord);
@@ -665,7 +797,7 @@
           } else {
             const scale = CELL_HEIGHT / 2 / fullHeight;
             const scaledFontSize = Math.floor(
-              CURRENT_MODEL.settings.font.size * scale
+              CURRENT_MODEL.settings.font.size * scale,
             );
             ctx.font = getFont(scaledFontSize);
             const scaledMetrics = ctx.measureText(chord);
@@ -703,7 +835,7 @@
           } else {
             const scale = CELL_WIDTH / 2 / fullWidth;
             const scaledFontSize = Math.floor(
-              CURRENT_MODEL.settings.font.size * scale
+              CURRENT_MODEL.settings.font.size * scale,
             );
             ctx.font = getFont(scaledFontSize);
             const scaledMetrics = ctx.measureText(chord);
@@ -727,25 +859,25 @@
             }
           }
         }
-        ctx.fillStyle = "#000";
-        ctx.textAlign = "center";
-        ctx.textBaseline = "alphabetic";
+        ctx.fillStyle = '#000';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'alphabetic';
         ctx.fillText(chord, chordX, chordY);
         ctx.font = currentFont;
       }
 
       function insertGrid() {
         const entries = Object.entries(CURRENT_MODEL.g);
-        const canvas = document.createElement("canvas");
-        canvas.setAttribute("width", CELL_WIDTH * entries.length);
-        canvas.setAttribute("height", CELL_HEIGHT);
-        const ctx = canvas.getContext("2d");
+        const canvas = document.createElement('canvas');
+        canvas.setAttribute('width', CELL_WIDTH * entries.length);
+        canvas.setAttribute('height', CELL_HEIGHT);
+        const ctx = canvas.getContext('2d');
         for (const [key, value] of entries) {
           drawChords(ctx, value);
           ctx.translate(CELL_WIDTH, 0);
         }
-        const imageData = canvas.toDataURL("image/png");
-        const scale = document.getElementById("field-scale").value;
+        const imageData = canvas.toDataURL('image/png');
+        const scale = document.getElementById('field-scale').value;
         CURRENT_MODEL.settings.scale = scale;
 
         setBusy(true, LOCALIZED_STRINGS.messageInserting);
@@ -757,22 +889,22 @@
 
       function setBusy(busy, message) {
         if (message) {
-          const busyMessage = document.getElementById("busy-message");
+          const busyMessage = document.getElementById('busy-message');
           busyMessage.firstChild.textContent = message;
         }
-        const overlay = document.getElementById("busy-overlay");
-        const body = document.getElementsByTagName("body")[0];
+        const overlay = document.getElementById('busy-overlay');
+        const body = document.getElementsByTagName('body')[0];
         if (busy) {
-          body.classList.add("lock");
-          overlay.classList.remove("hidden");
+          body.classList.add('lock');
+          overlay.classList.remove('hidden');
         } else {
-          body.classList.remove("lock");
-          overlay.classList.add("hidden");
+          body.classList.remove('lock');
+          overlay.classList.add('hidden');
         }
       }
 
       function addRow(data) {
-        const gridElements = document.getElementById("grid-elements");
+        const gridElements = document.getElementById('grid-elements');
         if (gridElements.children.length >= 16) {
           return;
         }
@@ -785,41 +917,41 @@
             <span id="chord-rotate-${newIndex}" class="material-symbols-outlined rotate hidden">swap_vert</span>
           </div>
         </div>`;
-        const newRowElement = document.createElement("template");
+        const newRowElement = document.createElement('template');
         newRowElement.innerHTML = newRow;
         gridElements.append(newRowElement.content.firstElementChild);
 
-        const newInput = document.getElementById("chord-input-" + newIndex);
-        newInput.addEventListener("keyup", onKeyUp);
-        newInput.addEventListener("focusin", onFocusIn);
+        const newInput = document.getElementById('chord-input-' + newIndex);
+        newInput.addEventListener('keyup', onKeyUp);
+        newInput.addEventListener('focusin', onFocusIn);
         if (data) {
           newInput.value = data.c;
         }
         const newRotateButton = document.getElementById(
-          "chord-rotate-" + newIndex
+          'chord-rotate-' + newIndex,
         );
-        newRotateButton.addEventListener("click", rotate);
+        newRotateButton.addEventListener('click', rotate);
 
         if (data) {
           CURRENT_MODEL.g[newIndex] = data;
         } else {
-          CURRENT_MODEL.g[newIndex] = { c: "", o: {} };
+          CURRENT_MODEL.g[newIndex] = {c: '', o: {}};
         }
         focusElement(newInput);
       }
 
       function focusElement(element) {
         LAST_FOCUSED = element;
-        const elements = document.querySelectorAll(".chord-div");
-        elements.forEach((element) => {
-          element.classList.remove("focused");
+        const elements = document.querySelectorAll('.chord-div');
+        elements.forEach(element => {
+          element.classList.remove('focused');
         });
-        element.parentElement.classList.add("focused");
+        element.parentElement.classList.add('focused');
         element.focus();
       }
 
       function removeRow() {
-        const gridElements = document.getElementById("grid-elements");
+        const gridElements = document.getElementById('grid-elements');
         if (gridElements.children.length === 1) {
           return;
         }
@@ -827,23 +959,23 @@
         gridElements.removeChild(gridElements.lastElementChild);
         delete CURRENT_MODEL.g[indexToRemove];
         const chordInput = document.getElementById(
-          "chord-input-" + (indexToRemove - 1)
+          'chord-input-' + (indexToRemove - 1),
         );
         focusElement(chordInput);
       }
 
       function removeAll(fullClean) {
-        const gridElements = document.getElementById("grid-elements");
+        const gridElements = document.getElementById('grid-elements');
         gridElements.replaceChildren();
         CURRENT_MODEL.g = {};
         if (!fullClean) {
-          addRow({ c: ["Am"] });
+          addRow({c: ['Am']});
         }
       }
 
       function rotate(event) {
         const spanElement = event.srcElement;
-        const elementIndex = spanElement.id.split("-")[2];
+        const elementIndex = spanElement.id.split('-')[2];
         if (CURRENT_MODEL.g[elementIndex].o?.r) {
           delete CURRENT_MODEL.g[elementIndex].o.r;
         } else {
@@ -852,18 +984,18 @@
           }
           CURRENT_MODEL.g[elementIndex].o.r = true;
         }
-        focusElement(document.getElementById("chord-input-" + elementIndex));
+        focusElement(document.getElementById('chord-input-' + elementIndex));
       }
 
       function clockwise(clockwise) {
         CURRENT_MODEL.settings.cw = clockwise;
         let clockwiseImage;
         if (clockwise) {
-          clockwiseImage = document.getElementById("clockwise-image");
+          clockwiseImage = document.getElementById('clockwise-image');
         } else {
-          clockwiseImage = document.getElementById("non-clockwise-image");
+          clockwiseImage = document.getElementById('non-clockwise-image');
         }
-        const clockwiseSelect = document.getElementById("dropdown-button");
+        const clockwiseSelect = document.getElementById('dropdown-button');
         clockwiseSelect.replaceChildren(clockwiseImage.cloneNode(true));
         focusElement(LAST_FOCUSED);
       }
@@ -877,9 +1009,9 @@
       }
 
       function changeShape(event) {
-        const shapeSelect = document.getElementById("select-shape");
+        const shapeSelect = document.getElementById('select-shape');
         const shape = shapeSelect.options[shapeSelect.selectedIndex].value;
-        applyShape(shape === "square");
+        applyShape(shape === 'square');
         focusElement(LAST_FOCUSED);
       }
 
@@ -894,10 +1026,34 @@
           CURRENT_MODEL.settings.font.size = 45;
         }
         CELL_RATIO = CELL_WIDTH / CELL_HEIGHT;
-        const previewCanvas = document.getElementById("canvas-preview");
-        previewCanvas.setAttribute("width", CELL_WIDTH);
-        previewCanvas.setAttribute("height", CELL_HEIGHT);
+        const previewCanvas = document.getElementById('canvas-preview');
+        previewCanvas.setAttribute('width', CELL_WIDTH);
+        previewCanvas.setAttribute('height', CELL_HEIGHT);
         CURRENT_MODEL.settings.square = square;
+      }
+
+      function transpose(chord, semitones) {
+        const chordRegex = /^([A-Ga-g])([b#]?)(.*)$/;
+        const match = chord.match(chordRegex);
+        if (!match) {
+          return chord;
+        }
+        let [_, root, accidental, suffix] = match;
+        root = root.toLowerCase();
+        if (CHORDS_FALLBACK[root + accidental]) {
+          const fallback = CHORDS_FALLBACK[root + accidental];
+          root = fallback[0];
+          accidental = fallback.slice(1);
+        }
+        const rootIndex = CHORDS_ARRAY.indexOf(root + accidental);
+        if (rootIndex === -1) {
+          return chord;
+        }
+        const newIndex =
+          (rootIndex + semitones + CHORDS_ARRAY.length) % CHORDS_ARRAY.length;
+        const newRoot = CHORDS_ARRAY[newIndex][0];
+        const newAccidental = CHORDS_ARRAY[newIndex].slice(1);
+        return newRoot.toUpperCase() + newAccidental + suffix;
       }
 
       async function selectionLoaded(cgcModel) {
@@ -913,38 +1069,38 @@
             addRow(cgcModel.g[i]);
           }
           // Apply shape setting
-          const shapeDropdown = document.getElementById("select-shape");
+          const shapeDropdown = document.getElementById('select-shape');
           const toSelect = CURRENT_MODEL.settings.square
-            ? "square"
-            : "rectangle";
-          Array.from(shapeDropdown.options).forEach((option) => {
+            ? 'square'
+            : 'rectangle';
+          Array.from(shapeDropdown.options).forEach(option => {
             option.selected = option.value === toSelect;
           });
           applyShape(CURRENT_MODEL.settings.square);
 
           // Apply font setting
-          const fontDropdown = document.getElementById("select-font");
-          Array.from(fontDropdown.options).forEach((option) => {
+          const fontDropdown = document.getElementById('select-font');
+          Array.from(fontDropdown.options).forEach(option => {
             option.selected = option.value === CURRENT_MODEL.settings.font.face;
           });
           await changeFont();
 
           // Apply bold setting
-          const checkbox = document.getElementById("checkbox-bold");
+          const checkbox = document.getElementById('checkbox-bold');
           checkbox.checked = CURRENT_MODEL.settings.font.bold;
 
           // Apply clockwise setting
           clockwise(CURRENT_MODEL.settings.cw);
 
           // Apply scale setting
-          const scaleField = document.getElementById("field-scale");
+          const scaleField = document.getElementById('field-scale');
           scaleField.value = CURRENT_MODEL.settings.scale;
 
-          const firstInput = document.getElementById("chord-input-0");
+          const firstInput = document.getElementById('chord-input-0');
           firstInput.blur();
           focusElement(firstInput);
         } else {
-          console.log("Nothing to load");
+          console.log('Nothing to load');
         }
         setBusy(false);
       }

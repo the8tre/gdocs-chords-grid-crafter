@@ -1,73 +1,78 @@
 ---
 ---
 
-@import "{{ site.theme }}";
+@import '{{ site.theme }}';
 
 .navigation {
-    margin: 10px;
-    color: #fff;
-    font-size: 18px;
-    font-weight: 700;
-    white-space: nowrap;
+  margin: 10px;
+  color: #fff;
+  font-size: 18px;
+  font-weight: 700;
+  white-space: nowrap;
 }
 
 .lang-logo {
-    border: none;
-    box-shadow: none;
-    -webkit-box-shadow: none;
-    vertical-align: middle;
-    height: 32px;
+  border: none;
+  box-shadow: none;
+  -webkit-box-shadow: none;
+  vertical-align: middle;
+  height: 32px;
 }
 
 #logo {
-    border: none;
-    box-shadow: none;
-    -webkit-box-shadow: none;
+  border: none;
+  box-shadow: none;
+  -webkit-box-shadow: none;
 }
 
 #logo-container {
-    text-align: center;
+  text-align: center;
+}
+
+#project_title {
+  text-align: center;
 }
 
 #google_translate_element {
-    position: absolute;
-    top: 50px;
-    right: 0px;
+  position: absolute;
+  top: 50px;
+  right: 0px;
 }
 
 img {
-    max-width: 100%;
-    height: auto;
+  max-width: 100%;
+  height: auto;
 }
 
-html, body {
-    overflow-x: hidden;
-    max-width: 100%;
+html,
+body {
+  overflow-x: hidden;
+  max-width: 100%;
 }
 
 @media screen and (max-width: 767px) {
-    .inner {
-        min-width: 0;
-        max-width: 100%;
-        padding: 20px 15px;
-    }
+  .inner {
+    min-width: 0;
+    max-width: 100%;
+    padding: 20px 15px;
+  }
 
-    .navigation {
-        white-space: normal;
-        font-size: 14px;
-    }
+  .navigation {
+    white-space: normal;
+    font-size: 14px;
+  }
 
-    #project_title {
-        font-size: 22px;
-    }
+  #project_title {
+    font-size: 32px;
+  }
 
-    #project_tagline {
-        font-size: 13px;
-    }
+  #project_tagline {
+    font-size: 13px;
+  }
 
-    table {
-        display: block;
-        overflow-x: auto;
-        max-width: 100%;
-    }
+  table {
+    display: block;
+    overflow-x: auto;
+    max-width: 100%;
+  }
 }
