@@ -12,6 +12,7 @@
     "build:watch": "tsc --watch",
     "push": "npm run lint && npm run clean && npm run build && clasp push",
     "fix": "gts fix",
+    "open": "clasp open-script .",
     "docs:serve": "cd docs && bundle exec jekyll serve --livereload"
   },
   "repository": {
